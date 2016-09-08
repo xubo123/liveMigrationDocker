@@ -1,0 +1,8 @@
+libdir=/usr/local/lib
+includedir=/usr/local/include/
+
+Name: CRIU
+Description: RPC library for userspace checkpoint and restore
+Version: 2.4
+Libs: -L${libdir} -lcriu
+Cflags: -I${includedir}

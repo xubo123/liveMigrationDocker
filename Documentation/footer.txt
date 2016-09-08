@@ -1,0 +1,4 @@
+:doctype:       manpage
+:man source:    criu
+:man version:   2.4
+:man manual:    CRIU Manual

@@ -1,0 +1,30 @@
+SECTIONS
+{
+	.text : {
+		*(.head.text)
+		*(.text*)
+	}
+
+	.data : {
+		*(.data*)
+		*(.bss*)
+	}
+
+	.rodata : {
+		*(.rodata*)
+		*(.got*)
+	}
+
+	.toc : ALIGN(8) {
+		*(.toc*)
+	}
+
+	/DISCARD/ : {
+		*(.debug*)
+		*(.comment*)
+		*(.note*)
+		*(.group*)
+		*(.eh_frame*)
+	}
+__export_parasite_args = .;
+}
