@@ -690,6 +690,12 @@ int main(int argc, char *argv[], char *envp[])
 
 		return cr_pre_dump_tasks(tree_id) != 0;
 	}
+	if (!strcmp(argv[optind],"pre-copy")){
+		if (!tree_id)
+			goto opt_pid_missing;
+		printf("test pre-copy\n");
+		return 1;
+	}
 
 	if (!strcmp(argv[optind], "restore")) {
 		preload_netfilter_modules();
@@ -753,10 +759,12 @@ usage:
 "  criu page-server\n"
 "  criu service [<options>]\n"
 "  criu dedup\n"
+"  criu pre-copy -t PID [<options>]\n"
 "\n"
 "Commands:\n"
 "  dump           checkpoint a process/tree identified by pid\n"
 "  pre-dump       pre-dump task(s) minimizing their frozen time\n"
+"  pre-copy       live migration tasks using pre-copy algorithm to minimizing the down-time\n"
 "  restore        restore a process/tree\n"
 "  check          checks whether the kernel support is up-to-date\n"
 "  exec           execute a system call by other task\n"
