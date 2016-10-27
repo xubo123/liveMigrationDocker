@@ -3,10 +3,10 @@
 
 import sys
 import logging
-from lm_docker_check import lm_docker_check
-from lm_docker_overlay import overlay
-from lm_docker_handoff import handoff
-from lm_docker_daemon import daemon
+from lm_docker_check import lm_docker_check 
+#from lm_docker_overlay import overlay
+#from lm_docker_handoff import handoff
+#from lm_docker_daemon import daemon
 
 
 lm_docker_version = '0.1'
@@ -31,13 +31,13 @@ def parase(argv):
 	opt = argv[0]
 	if argv_len == 1:
 		if opt == 'check':
-			ret = lm_docket_check()
+			ret = lm_docker_check()
 	
 	if argv_len == 2:
 		if opt == 'service' and argv[1] == '-l':
 			clet = daemon();
 			clet.run()
-		else opt == 'fetch':
+		elif opt == 'fetch':
 			overlay_name = argv[1]
 			ovlay = overlay(overlay_name,None)
 			ovlay.fetch()
@@ -63,7 +63,7 @@ def parase(argv):
 			hdoff = handoff(con,dst_ip)
 			ret = hdoff.run()
 
-	if ret is False
+	if ret is False:
 		logging.error('service failed')
 		return False
 	return True

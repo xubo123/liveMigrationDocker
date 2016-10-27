@@ -20,7 +20,7 @@ def lm_docker_check():
 	return True
 
 def docker_check():
-	docker_version = sp.check_output('docker_version',shell=True)
+	docker_version = sp.check_output('docker version',shell=True)
 	lines = docker_version.split('\n')
 	for line in lines:
 		if 'API version' in line:

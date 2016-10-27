@@ -6,14 +6,13 @@ criu/pstree.d criu/pstree.o: criu/pstree.c /usr/include/stdc-predef.h \
  /usr/include/x86_64-linux-gnu/gnu/stubs-64.h \
  /usr/include/x86_64-linux-gnu/bits/types.h \
  /usr/include/x86_64-linux-gnu/bits/typesizes.h \
- /usr/lib/gcc/x86_64-linux-gnu/4.8/include/stddef.h \
+ /usr/local/lib/gcc/x86_64-unknown-linux-gnu/4.9.3/include/stddef.h \
  /usr/include/x86_64-linux-gnu/bits/mman.h \
  /usr/include/x86_64-linux-gnu/bits/mman-linux.h /usr/include/unistd.h \
  /usr/include/x86_64-linux-gnu/bits/posix_opt.h \
  /usr/include/x86_64-linux-gnu/bits/environments.h \
  /usr/include/x86_64-linux-gnu/bits/confname.h /usr/include/getopt.h \
- /usr/include/x86_64-linux-gnu/bits/unistd.h /usr/include/stdlib.h \
- /usr/include/x86_64-linux-gnu/bits/waitflags.h \
+ /usr/include/stdlib.h /usr/include/x86_64-linux-gnu/bits/waitflags.h \
  /usr/include/x86_64-linux-gnu/bits/waitstatus.h /usr/include/endian.h \
  /usr/include/x86_64-linux-gnu/bits/endian.h \
  /usr/include/x86_64-linux-gnu/bits/byteswap.h \
@@ -23,48 +22,51 @@ criu/pstree.d criu/pstree.o: criu/pstree.c /usr/include/stdc-predef.h \
  /usr/include/x86_64-linux-gnu/bits/select.h \
  /usr/include/x86_64-linux-gnu/bits/sigset.h \
  /usr/include/x86_64-linux-gnu/bits/time.h \
- /usr/include/x86_64-linux-gnu/bits/select2.h \
  /usr/include/x86_64-linux-gnu/sys/sysmacros.h \
  /usr/include/x86_64-linux-gnu/bits/pthreadtypes.h /usr/include/alloca.h \
  /usr/include/x86_64-linux-gnu/bits/stdlib-bsearch.h \
- /usr/include/x86_64-linux-gnu/bits/stdlib-float.h \
- /usr/include/x86_64-linux-gnu/bits/stdlib.h /usr/include/sched.h \
+ /usr/include/x86_64-linux-gnu/bits/stdlib-float.h /usr/include/sched.h \
  /usr/include/x86_64-linux-gnu/bits/sched.h \
- /home/hdq/criu/criu/include/cr_options.h \
- /usr/lib/gcc/x86_64-linux-gnu/4.8/include/stdbool.h \
- /home/hdq/criu/criu/include/list.h \
- /home/hdq/criu/criu/include/compiler.h \
- /home/hdq/criu/criu/include/pstree.h /home/hdq/criu/criu/include/pid.h \
- /home/hdq/criu/criu/include/rbtree.h \
- /home/hdq/criu/criu/arch/x86/include/asm/types.h /usr/include/signal.h \
- /usr/include/x86_64-linux-gnu/bits/signum.h \
+ /home/hdq/liveMigrationDocker/criu/include/cr_options.h \
+ /usr/local/lib/gcc/x86_64-unknown-linux-gnu/4.9.3/include/stdbool.h \
+ /home/hdq/liveMigrationDocker/criu/include/list.h \
+ /home/hdq/liveMigrationDocker/criu/include/compiler.h \
+ /home/hdq/liveMigrationDocker/criu/include/pstree.h \
+ /home/hdq/liveMigrationDocker/criu/include/pid.h \
+ /home/hdq/liveMigrationDocker/criu/include/rbtree.h \
+ /home/hdq/liveMigrationDocker/criu/arch/x86/include/asm/types.h \
+ /usr/include/signal.h /usr/include/x86_64-linux-gnu/bits/signum.h \
  /usr/include/x86_64-linux-gnu/bits/siginfo.h \
  /usr/include/x86_64-linux-gnu/bits/sigaction.h \
  /usr/include/x86_64-linux-gnu/bits/sigcontext.h \
  /usr/include/x86_64-linux-gnu/bits/sigstack.h \
  /usr/include/x86_64-linux-gnu/sys/ucontext.h \
  /usr/include/x86_64-linux-gnu/bits/sigthread.h \
- /home/hdq/criu/criu/arch/x86/include/asm/page.h \
- /home/hdq/criu/criu/arch/x86/include/asm/bitops.h \
- /home/hdq/criu/criu/arch/x86/include/asm/bitsperlong.h \
- /home/hdq/criu/criu/arch/x86/include/asm/int.h \
- /home/hdq/criu/criu/include/asm-generic/int.h \
- /usr/lib/gcc/x86_64-linux-gnu/4.8/include/stdint.h /usr/include/stdint.h \
- /usr/include/x86_64-linux-gnu/bits/wchar.h \
- /home/hdq/criu/images/core.pb-c.h \
+ /home/hdq/liveMigrationDocker/criu/arch/x86/include/asm/page.h \
+ /home/hdq/liveMigrationDocker/criu/arch/x86/include/asm/bitops.h \
+ /home/hdq/liveMigrationDocker/criu/arch/x86/include/asm/bitsperlong.h \
+ /home/hdq/liveMigrationDocker/criu/arch/x86/include/asm/int.h \
+ /home/hdq/liveMigrationDocker/criu/include/asm-generic/int.h \
+ /usr/local/lib/gcc/x86_64-unknown-linux-gnu/4.9.3/include/stdint.h \
+ /usr/include/stdint.h /usr/include/x86_64-linux-gnu/bits/wchar.h \
+ /home/hdq/liveMigrationDocker/images/core.pb-c.h \
  /usr/include/google/protobuf-c/protobuf-c.h /usr/include/assert.h \
  /usr/include/inttypes.h \
  /usr/include/google/protobuf-c/protobuf-c-private.h \
- /home/hdq/criu/images/core-x86.pb-c.h /home/hdq/criu/images/opts.pb-c.h \
- /home/hdq/criu/images/google/protobuf/descriptor.pb-c.h \
- /home/hdq/criu/images/core-arm.pb-c.h \
- /home/hdq/criu/images/core-aarch64.pb-c.h \
- /home/hdq/criu/images/core-ppc64.pb-c.h \
- /home/hdq/criu/images/rlimit.pb-c.h /home/hdq/criu/images/timer.pb-c.h \
- /home/hdq/criu/images/creds.pb-c.h /home/hdq/criu/images/siginfo.pb-c.h \
- /home/hdq/criu/criu/include/rst-malloc.h \
- /home/hdq/criu/criu/include/lock.h /usr/include/linux/futex.h \
- /usr/include/linux/types.h /usr/include/x86_64-linux-gnu/asm/types.h \
+ /home/hdq/liveMigrationDocker/images/core-x86.pb-c.h \
+ /home/hdq/liveMigrationDocker/images/opts.pb-c.h \
+ /home/hdq/liveMigrationDocker/images/google/protobuf/descriptor.pb-c.h \
+ /home/hdq/liveMigrationDocker/images/core-arm.pb-c.h \
+ /home/hdq/liveMigrationDocker/images/core-aarch64.pb-c.h \
+ /home/hdq/liveMigrationDocker/images/core-ppc64.pb-c.h \
+ /home/hdq/liveMigrationDocker/images/rlimit.pb-c.h \
+ /home/hdq/liveMigrationDocker/images/timer.pb-c.h \
+ /home/hdq/liveMigrationDocker/images/creds.pb-c.h \
+ /home/hdq/liveMigrationDocker/images/siginfo.pb-c.h \
+ /home/hdq/liveMigrationDocker/criu/include/rst-malloc.h \
+ /home/hdq/liveMigrationDocker/criu/include/lock.h \
+ /usr/include/linux/futex.h /usr/include/linux/types.h \
+ /usr/include/x86_64-linux-gnu/asm/types.h \
  /usr/include/asm-generic/types.h /usr/include/asm-generic/int-ll64.h \
  /usr/include/x86_64-linux-gnu/asm/bitsperlong.h \
  /usr/include/asm-generic/bitsperlong.h /usr/include/linux/posix_types.h \
@@ -73,8 +75,8 @@ criu/pstree.d criu/pstree.o: criu/pstree.c /usr/include/stdc-predef.h \
  /usr/include/x86_64-linux-gnu/asm/posix_types_64.h \
  /usr/include/asm-generic/posix_types.h \
  /usr/include/x86_64-linux-gnu/sys/time.h \
- /usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed/limits.h \
- /usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed/syslimits.h \
+ /usr/local/lib/gcc/x86_64-unknown-linux-gnu/4.9.3/include-fixed/limits.h \
+ /usr/local/lib/gcc/x86_64-unknown-linux-gnu/4.9.3/include-fixed/syslimits.h \
  /usr/include/limits.h /usr/include/x86_64-linux-gnu/bits/posix1_lim.h \
  /usr/include/x86_64-linux-gnu/bits/local_lim.h \
  /usr/include/linux/limits.h \
@@ -84,48 +86,51 @@ criu/pstree.d criu/pstree.o: criu/pstree.c /usr/include/stdc-predef.h \
  /usr/include/x86_64-linux-gnu/bits/errno.h /usr/include/linux/errno.h \
  /usr/include/x86_64-linux-gnu/asm/errno.h \
  /usr/include/asm-generic/errno.h /usr/include/asm-generic/errno-base.h \
- /home/hdq/criu/criu/arch/x86/include/asm/atomic.h \
- /home/hdq/criu/criu/arch/x86/include/asm/cmpxchg.h \
- /home/hdq/criu/criu/include/bug.h /home/hdq/criu/criu/include/log.h \
- /home/hdq/criu/criu/include/criu-log.h /usr/include/string.h \
- /usr/include/x86_64-linux-gnu/bits/string.h \
+ /home/hdq/liveMigrationDocker/criu/arch/x86/include/asm/atomic.h \
+ /home/hdq/liveMigrationDocker/criu/arch/x86/include/asm/cmpxchg.h \
+ /home/hdq/liveMigrationDocker/criu/include/bug.h \
+ /home/hdq/liveMigrationDocker/criu/include/log.h \
+ /home/hdq/liveMigrationDocker/criu/include/criu-log.h \
+ /usr/include/string.h /usr/include/x86_64-linux-gnu/bits/string.h \
  /usr/include/x86_64-linux-gnu/bits/string2.h \
- /usr/include/x86_64-linux-gnu/bits/string3.h \
  /usr/include/x86_64-linux-gnu/sys/syscall.h \
  /usr/include/x86_64-linux-gnu/asm/unistd.h \
  /usr/include/x86_64-linux-gnu/asm/unistd_64.h \
  /usr/include/x86_64-linux-gnu/bits/syscall.h \
- /home/hdq/criu/criu/include/namespaces.h \
- /home/hdq/criu/criu/include/files.h \
+ /home/hdq/liveMigrationDocker/criu/include/namespaces.h \
+ /home/hdq/liveMigrationDocker/criu/include/files.h \
  /usr/include/x86_64-linux-gnu/sys/stat.h \
  /usr/include/x86_64-linux-gnu/bits/stat.h \
- /home/hdq/criu/criu/include/fcntl.h /usr/include/fcntl.h \
+ /home/hdq/liveMigrationDocker/criu/include/fcntl.h /usr/include/fcntl.h \
  /usr/include/x86_64-linux-gnu/bits/fcntl.h \
  /usr/include/x86_64-linux-gnu/bits/fcntl-linux.h \
  /usr/include/x86_64-linux-gnu/bits/uio.h \
- /usr/include/x86_64-linux-gnu/bits/fcntl2.h \
- /home/hdq/criu/criu/include/lock.h \
- /home/hdq/criu/criu/include/rst_info.h /home/hdq/criu/criu/include/vma.h \
- /home/hdq/criu/criu/include/image.h \
- /home/hdq/criu/criu/include/servicefd.h \
- /home/hdq/criu/criu/include/image-desc.h \
- /home/hdq/criu/criu/include/magic.h /home/hdq/criu/criu/include/bfd.h \
- /home/hdq/criu/criu/include/err.h /home/hdq/criu/images/vma.pb-c.h \
- /home/hdq/criu/images/fdinfo.pb-c.h /home/hdq/criu/images/fown.pb-c.h \
- /home/hdq/criu/criu/include/files.h /home/hdq/criu/criu/include/tty.h \
+ /home/hdq/liveMigrationDocker/criu/include/lock.h \
+ /home/hdq/liveMigrationDocker/criu/include/rst_info.h \
+ /home/hdq/liveMigrationDocker/criu/include/vma.h \
+ /home/hdq/liveMigrationDocker/criu/include/image.h \
+ /home/hdq/liveMigrationDocker/criu/include/servicefd.h \
+ /home/hdq/liveMigrationDocker/criu/include/image-desc.h \
+ /home/hdq/liveMigrationDocker/criu/include/magic.h \
+ /home/hdq/liveMigrationDocker/criu/include/bfd.h \
+ /home/hdq/liveMigrationDocker/criu/include/err.h \
+ /home/hdq/liveMigrationDocker/images/vma.pb-c.h \
+ /home/hdq/liveMigrationDocker/images/fdinfo.pb-c.h \
+ /home/hdq/liveMigrationDocker/images/fown.pb-c.h \
+ /home/hdq/liveMigrationDocker/criu/include/files.h \
+ /home/hdq/liveMigrationDocker/criu/include/tty.h \
  /usr/include/linux/major.h /usr/include/linux/vt.h \
- /home/hdq/criu/criu/include/mount.h \
- /home/hdq/criu/criu/arch/x86/include/asm/dump.h \
- /home/hdq/criu/criu/include/protobuf.h \
- /home/hdq/criu/criu/include/protobuf-desc.h \
- /home/hdq/criu/criu/include/util.h /usr/include/stdio.h \
+ /home/hdq/liveMigrationDocker/criu/include/mount.h \
+ /home/hdq/liveMigrationDocker/criu/arch/x86/include/asm/dump.h \
+ /home/hdq/liveMigrationDocker/criu/include/protobuf.h \
+ /home/hdq/liveMigrationDocker/criu/include/protobuf-desc.h \
+ /home/hdq/liveMigrationDocker/criu/include/util.h /usr/include/stdio.h \
  /usr/include/libio.h /usr/include/_G_config.h /usr/include/wchar.h \
- /usr/lib/gcc/x86_64-linux-gnu/4.8/include/stdarg.h \
+ /usr/local/lib/gcc/x86_64-unknown-linux-gnu/4.9.3/include/stdarg.h \
  /usr/include/x86_64-linux-gnu/bits/sys_errlist.h \
  /usr/include/x86_64-linux-gnu/bits/stdio.h \
- /usr/include/x86_64-linux-gnu/bits/stdio2.h \
  /usr/include/x86_64-linux-gnu/sys/statfs.h \
  /usr/include/x86_64-linux-gnu/bits/statfs.h /usr/include/dirent.h \
  /usr/include/x86_64-linux-gnu/bits/dirent.h \
- /home/hdq/criu/criu/include/xmalloc.h \
- /home/hdq/criu/images/pstree.pb-c.h
+ /home/hdq/liveMigrationDocker/criu/include/xmalloc.h \
+ /home/hdq/liveMigrationDocker/images/pstree.pb-c.h

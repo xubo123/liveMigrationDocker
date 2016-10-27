@@ -4,7 +4,7 @@ criu/fault-injection.d criu/fault-injection.o: criu/fault-injection.c \
  /usr/include/x86_64-linux-gnu/bits/wordsize.h \
  /usr/include/x86_64-linux-gnu/gnu/stubs.h \
  /usr/include/x86_64-linux-gnu/gnu/stubs-64.h \
- /usr/lib/gcc/x86_64-linux-gnu/4.8/include/stddef.h \
+ /usr/local/lib/gcc/x86_64-unknown-linux-gnu/4.9.3/include/stddef.h \
  /usr/include/x86_64-linux-gnu/bits/waitflags.h \
  /usr/include/x86_64-linux-gnu/bits/waitstatus.h /usr/include/endian.h \
  /usr/include/x86_64-linux-gnu/bits/endian.h \
@@ -17,11 +17,9 @@ criu/fault-injection.d criu/fault-injection.o: criu/fault-injection.c \
  /usr/include/x86_64-linux-gnu/bits/select.h \
  /usr/include/x86_64-linux-gnu/bits/sigset.h \
  /usr/include/x86_64-linux-gnu/bits/time.h \
- /usr/include/x86_64-linux-gnu/bits/select2.h \
  /usr/include/x86_64-linux-gnu/sys/sysmacros.h \
  /usr/include/x86_64-linux-gnu/bits/pthreadtypes.h /usr/include/alloca.h \
  /usr/include/x86_64-linux-gnu/bits/stdlib-bsearch.h \
  /usr/include/x86_64-linux-gnu/bits/stdlib-float.h \
- /usr/include/x86_64-linux-gnu/bits/stdlib.h \
- /home/hdq/criu/criu/include/fault-injection.h \
- /usr/lib/gcc/x86_64-linux-gnu/4.8/include/stdbool.h
+ /home/hdq/liveMigrationDocker/criu/include/fault-injection.h \
+ /usr/local/lib/gcc/x86_64-unknown-linux-gnu/4.9.3/include/stdbool.h

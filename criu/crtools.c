@@ -693,7 +693,15 @@ int main(int argc, char *argv[], char *envp[])
 	if (!strcmp(argv[optind],"pre-copy")){
 		if (!tree_id)
 			goto opt_pid_missing;
-		printf("test pre-copy\n");
+		printf("test pre-copy new\n");
+		double dirty_page_ratio = 1;
+		double dirty_page_threshold = 0.2;
+		while (dirty_page_ratio >= dirty_page_threshold){
+			cr_pre_dump_tasks(tree_id);
+			dirty_page_ratio -= 0.1;
+		}
+		cr_dump_tasks(tree_id);
+
 		return 1;
 	}
 

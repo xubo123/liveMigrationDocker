@@ -4,5 +4,5 @@
 #define CRIU_VERSION "2.4"
 #define CRIU_VERSION_MAJOR  2
 #define CRIU_VERSION_MINOR  4
-#define CRIU_GITID "v2.4-70-g9c7a234"
+#define CRIU_GITID "63f0280"
 #endif /* __CR_VERSION_H__ */
