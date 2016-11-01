@@ -13,7 +13,7 @@ socket = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
 def get_name():
 	print 'please imput the docker image you want to migrate'
 	global image_name
-	image_name = raw_imput("name: ")
+	image_name = raw_input("name: ")
 
 	print 'please imput the destionation ip'
 	global HOST
@@ -25,13 +25,13 @@ def get_name():
 #package.
 def tar_file():
 #create file path.
-	file_path = '/tmp'+image_name
+	file_path = '/tmp/'+image_name
 
 	if False == os.path.exists(file_path):
 		print 'error, file dir(%s) not exist'% file_path
 	
 	full_name = '/tmp/'+image_name+'.tar'
-	tar_file = tar_file.open(full_name,'w')
+	tar_file = tarfile.open(full_name,'w')
 	for root,dir,files in os.walk(file_path):
 		for file in files:
 			fullpath = os.path.join(root,file)
@@ -40,7 +40,7 @@ def tar_file():
 	tar_file.close()
 	
 
-	if False == os.path.isfile(full_name)
+	if False == os.path.isfile(full_name):
 		print 'error, tar failed'
 
 def send_file():

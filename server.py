@@ -13,9 +13,16 @@ BUF_SIZE = 1024
 full_path=''
 name=''
 
+def get_ip_address(ifname):
+	s= socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+	return socket.inet_ntoa(fcntl.ioctl(s.fileno(),0x8915,
+					socket.pack('256s',ifname[:15]))[20:24])
+
+
 def accept_file():
 
-	host=ni.ifaddresses('eth1')[2][0]['addr']
+#	host = get_ip_address('eth1')	
+	host=ni.ifaddresses('p1p1')[2][0]['addr']
 	port = 10018
 	socket.bind((host,port))
 	socket.listen(5)
@@ -23,7 +30,7 @@ def accept_file():
 	conn, addr = socket.accept()
 	print 'connecting from:', addr
 
-	buffer = conn.recv[1024]
+	buffer = conn.recv(1024)
 	global full_path
 	full_path = buffer.split('\0')[0]
 	print full_path
