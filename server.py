@@ -77,11 +77,11 @@ def unpackage():
 
 def do_restore():
 	base_image = 'busybox'
-	create_op = 'docker create --name='+name+' '+base_image
+	create_op = 'docker create --name=' + name + ' ' + base_image
 	ret,id = commands.getstatusoutput(create_op)
 	print id
 
-	restore_op = 'docker restore --force=true --image-dir=/tmp/'+name+' '+id
+	restore_op = 'docker restore --force=true --image-dir=/tmp/' + name + ' ' + id
 	print restore_op
 	os.system(restore_op)
 

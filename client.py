@@ -11,37 +11,37 @@ image_name=''
 socket = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
 
 def get_name():
-	print 'please imput the docker image you want to migrate'
+	print 'please input the docker image you want to migrate'
 	global image_name
 	image_name = raw_input("name: ")
 
-	print 'please imput the destionation ip'
+	print 'please input the destionation ip'
 	global HOST
-	HOST = raw_input("host:")
+	HOST = raw_input("destion ip:")
 
-	checkpoint_sh = 'docker checkpoint --image-dir=/tmp/'+image_name+' '+image_name
+	checkpoint_sh = 'docker checkpoint --image-dir=/tmp/' + image_name + ' ' + image_name
 	os.system(checkpoint_sh)
 
 #package.
 def tar_file():
 #create file path.
-	file_path = '/tmp/'+image_name
+	file_path = '/tmp/' + image_name
 
 	if False == os.path.exists(file_path):
-		print 'error, file dir(%s) not exist'% file_path
+		print 'Error, file dir %s not exist'% file_path
 	
 	full_name = '/tmp/'+image_name+'.tar'
 	tar_file = tarfile.open(full_name,'w')
-	for root,dir,files in os.walk(file_path):
+	for root,dirs,files in os.walk(file_path):
 		for file in files:
 			fullpath = os.path.join(root,file)
-			tar_file.add(fullpath,arcname=file)
+			tar_file.add(fullpath,arcname = file)
 	
 	tar_file.close()
 	
 
 	if False == os.path.isfile(full_name):
-		print 'error, tar failed'
+		print 'Error, tar failed'
 
 def send_file():
 
@@ -50,9 +50,9 @@ def send_file():
 	except Exception,e:
 		print 'Error connecting to server:%s'% e
 
-	full_name = '/tmp/' +image_name+'.tar'
+	full_name = '/tmp/' + image_name + '.tar'
 
-	print 'send:'+full_name
+	print 'send:' + full_name
 
 	try:
 		socket.send(full_name,1024)
