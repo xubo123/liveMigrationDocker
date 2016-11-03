@@ -12,7 +12,7 @@ docker_api_version = ''
 
 def lm_docker_check():
 	logging.info('start validate checking...')
-	if(docker_check() and criu_check() and docker_py_check()) is False:
+	if(docker_check() and criu_check() and docker_py_check() and kernel_check()) is False:
 		logging.error('Error: lm_docker environment check failed')
 		return False
 
@@ -67,3 +67,16 @@ def docker_py_check():
 	logging.debug('docker py works')
 	return True
 
+def kernel_check():
+	logging.info('linux kernel check')
+	kernel_version = sp.check_output('uname -a',shell = True)
+	kernel_version = kernel_version.split(' ')[2]
+	kernel_version = kernel_version.split('-')[0]
+	kernel_first_version = kernel_version.split('.')[0]
+	kernel_second_version = kernel_version.split('.')[1]
+	if (int)(kernel_first_version) < 4 or (int)(kernel_second_version) < 2 :
+		logging.error('Error: linux kernel version should be at least 4.2.0.')
+		return False
+	else:
+		logging.info('kernel check in successfully.')
+	return True
