@@ -8,7 +8,7 @@ import logging
 import time
 
 from docker import Client
-from lm_docker_utl import *
+from lm_docker_util import *
 
 BUF_SIZE = 1024
 

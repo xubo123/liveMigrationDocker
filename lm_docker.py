@@ -5,8 +5,8 @@ import sys
 import logging
 from lm_docker_check import lm_docker_check 
 #from lm_docker_overlay import overlay
-#from lm_docker_handoff import handoff
-#from lm_docker_daemon import daemon
+from lm_docker_live_migrate import live_migrate
+from lm_docker_service import server_node
 
 
 lm_docker_version = '0.1'
@@ -35,8 +35,8 @@ def parase(argv):
 	
 	if argv_len == 2:
 		if opt == 'service' and argv[1] == '-l':
-			clet = daemon();
-			clet.run()
+			server = server_node();
+			server.run()
 		elif opt == 'fetch':
 			overlay_name = argv[1]
 			ovlay = overlay(overlay_name,None)
@@ -53,15 +53,15 @@ def parase(argv):
 	
 	if argv_len == 4:
 		if opt == 'migrate':
-			con = argv[1]
+			container_name = argv[1]
 			cmd_option = argv[2]
 			dst_ip = argv[3]
 			if cmd_option != '-t':
 				logging.error('please follow opt format:')
 				logging.error(' migrate [container] -t [dst ip]')
 				return False
-			hdoff = handoff(con,dst_ip)
-			ret = hdoff.run()
+			lmigrate = live_migrate(container_name, dst_ip)
+			ret = lmigrate.run()
 
 	if ret is False:
 		logging.error('service failed')

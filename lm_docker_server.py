@@ -45,7 +45,7 @@ class lm_docker_server(SocketServer.BaseRequestHandler):
 		self.request.recv(length)
 
 
-	def handler(self):
+	def handle(self):
 		tmp = self.recv_msg()
 		str_array = tmp.split('#')
 

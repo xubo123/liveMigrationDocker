@@ -20,11 +20,11 @@ class server_node:
 	
 	def run(self):
 		HOST = ni.ifaddresses('p1p1')[2][0]['addr']
-		logging.info(host)
-		server = ServerThread((HOST,PORT),lm_docker_handler)
+		logging.info(HOST)
+		server = ServerThread((HOST,PORT),lm_docker_server)
 
 		try:
-			server.server_forever()
+			server.serve_forever()
 		except KeyboardInterrupt:
 			logging.debug('server node stop because of keyboard interrupt')
 			server.shutdown()
