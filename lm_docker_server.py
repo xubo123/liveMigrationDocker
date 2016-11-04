@@ -13,7 +13,11 @@ from lm_docker_util import *
 
 
 class lm_docker_server(SocketServer.BaseRequestHandler):
-
+	"""
+	The request handler class for our server.
+	It is instantiated once per connection to the server, and must
+	override the handle() method to implement communication to the client.
+	"""
 	def recv_file(self,file_name,file_size):
 		hd_file = open(file_name,'wb')
 		try:
