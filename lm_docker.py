@@ -5,7 +5,7 @@ import sys
 import logging
 from lm_docker_check import lm_docker_check 
 #from lm_docker_overlay import overlay
-from lm_docker_live_migrate import live_migrate
+from lm_docker_livemigrate import live_migrate
 from lm_docker_service import server_node
 
 
@@ -61,6 +61,7 @@ def parase(argv):
 				logging.error(' migrate [container] -t [dst ip]')
 				return False
 			lmigrate = live_migrate(container_name, dst_ip)
+		    
 			ret = lmigrate.run()
 
 	if ret is False:

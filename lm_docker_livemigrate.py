@@ -16,8 +16,8 @@ BUF_SIZE = 1024
 
 #----Get the container information by the container name. (id,label,pid)----#
 def get_container_info(container_name):
-	cli = Client(version='1.13.0-dev')
-	out = cli.inspect_container(name)
+	cli = Client(version='1.22')
+	out = cli.inspect_container(container_name)
 	
 	if 'Error' in out:
 		logging.error('Error: Get container id Failed')
@@ -25,7 +25,7 @@ def get_container_info(container_name):
 
 	image = out['Config']['Image']
 	image_id = out['Image']
-	label = name + '-' + image + '-' + image_id
+	label = container_name + '-' + image + '-' + image_id
 	logging.info(label)
 	pid = out['State']['Pid']
 	logging.info(pid)
@@ -35,7 +35,7 @@ def get_container_info(container_name):
 
 #----Check whether the container is running or not.----#
 def check_container_status(container_id):
-	cli = Client(version='1.13.0-dev')
+	cli = Client(version='1.22')
 	out = cli.containers(container_id)
 	lines = str(out)
 
@@ -49,7 +49,7 @@ def check_container_status(container_id):
 class live_migrate:
 	def __init__(self, container_name, dst_ip):
 		self.dst_ip = dst_ip
-		seld.container_name = container_name
+		self.container_name = container_name
 		self.task_id = random_str()
 		self.container_id, self.label, self.pid = get_container_info(container_name)
 
@@ -64,11 +64,11 @@ class live_migrate:
 			return False
 
 		#----we need to know the destination node status, CRIU version, Docker version etc.----#
-		lm_docker_socket = lm_docker_socket(self.dst_ip)
+		lm_socket = lm_docker_socket(self.dst_ip)
 		msg = 'init#' + self.task_id + '#' + self.label
-		lm_docker_socket.send(msg)
+		lm_socket.send_msg(msg)
 
-		data = lm_docker_socket.recv()
+		data = lm_socket.recv_msg()
 		if 'success' not in data:
 			logging.error('send msg failed')
 			return False
@@ -80,9 +80,9 @@ class live_migrate:
 			return False
 		image_fs = fs_handle.image_path()
 		msg_fs = 'fs#' + str(os.path.getsize(fs_image)) + '#'
-		lm_docker_socket.send(msg_fs)
-		lm_docker_socket.send_file(image_fs)
-		data = lm_docker_socket.recv()
+		lm_socket.send_msg(msg_fs)
+		lm_socket.send_file(image_fs)
+		data = lm_socket.recv_msg()
 
 		#----start the pre-copy looper----#
 		pre_time_start = time.time()

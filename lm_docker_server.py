@@ -5,6 +5,7 @@ import os
 import netifaces as ni
 import logging
 import SocketServer
+import struct
 import time
 
 
