@@ -57,6 +57,7 @@ class live_migrate:
 	def run(self):
 		print('task id:' + self.task_id)
 		start_time = time.time()
+		print(start_time)
 
 		#----check container status: before migrate, we must ensure the container is running in host.----# 
 		if not check_container_status(self.container_id):
@@ -66,15 +67,17 @@ class live_migrate:
 		#----we need to know the destination node status, CRIU version, Docker version etc.----#
 		lm_socket = lm_docker_socket(self.dst_ip)
 		msg = 'init#' + self.task_id + '#' + self.label
+		print('client send msg: ' + msg)
 		lm_socket.send_msg(msg)
 
 		data = lm_socket.recv_msg()
+		print ('data1' + data)
 		if 'success' not in data:
 			logging.error('send msg failed')
 			return False
 	
 		#----file system.----#
-		fs_handle = lm_docker_filesystem(self.container_id,self.task_id)
+	'''	fs_handle = lm_docker_filesystem(self.container_id,self.task_id)
 		if not fs_handle.tar_file():
 			logging.error('Error: tar file failed\n')
 			return False
@@ -83,10 +86,11 @@ class live_migrate:
 		lm_socket.send_msg(msg_fs)
 		lm_socket.send_file(image_fs)
 		data = lm_socket.recv_msg()
+		print 'data2' + data
 
 		#----start the pre-copy looper----#
 		pre_time_start = time.time()
-
+'''
 
 
 

@@ -7,11 +7,9 @@ import logging
 import SocketServer
 import struct
 import time
-
-
-
 from lm_docker_util import *
 
+BUF_SIZE = 1024
 
 class lm_docker_server(SocketServer.BaseRequestHandler):
 	"""
@@ -47,11 +45,20 @@ class lm_docker_server(SocketServer.BaseRequestHandler):
 	def recv_msg(self):
 		format_buf = self.request.recv(4)
 		length, = struct.unpack('!I',format_buf)
-		self.request.recv(length)
+		return self.request.recv(length)
 
 
 	def handle(self):
 		tmp = self.recv_msg()
+		print ('tmp:' + tmp)
 		str_array = tmp.split('#')
+		cmd_type = str_array[0]
+
+		if 'init' == cmd_type:
+			self.task_id = str_array[1]
+			self.label = str_array[2]
+			self.send_msg('init:success')
+			logging.info('get init msg success.')
+
 
 
