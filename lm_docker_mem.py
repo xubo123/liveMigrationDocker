@@ -28,10 +28,10 @@ class lm_docker_memory:
 	def predump_name(self):
 		return 'predump' + str(self.predump_count)
 
-	def predump_img_path(self):
+	def predump_image_path(self):
 		return self.workdir() + self.task_id + '-' +self.predump_name() +'.tar'
 
-	def dump_img_path(self):
+	def dump_image_path(self):
 		return self.workdir() + self.task_id + '-dump.tar'
 
 	def rename(self):
@@ -67,15 +67,15 @@ class lm_docker_memory:
 			return False
 
 		name = self.task_id + '-' + dir_name +'.tar'
-		self.pack_img(self.workdir(),name,dir_name)
+		self.tar_image(self.workdir(),name,dir_name)
 		return True
 
 	
-	def pack_img(self,img_dir,name,path):
-		os.chdir(img_dir)
+	def tar_image(self,image_dir,name,path):
+		os.chdir(image_dir)
 		os.chdir(path)
 		lz4_tarfile('1')
-		os.chdir(img_dir)
+		os.chdir(image_dir)
 
 		tar_file = tarfile.open(name,'w')
 		tar_file.add(path)
@@ -109,8 +109,8 @@ class lm_docker_memory:
 			return False
 
 		dump_time_start2 = time.time()
-		name = self.task_is +'-dump.tar'
-		self.pack_img(self.workdir(),name,dump_dir)
+		name = self.task_id +'-dump.tar'
+		self.tar_image(self.workdir(),name,dump_dir)
 		dump_time_end = time.time()
 
 		logging.debug('dump handle time: %f' % (dump_time_start2 - dump_time_start1))
