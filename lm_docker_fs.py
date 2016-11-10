@@ -26,7 +26,7 @@ class lm_docker_filesystem:
 
 
 	def workdir(self):
-		return base_dir +'tmp/' +self.task_is +'/'
+		return base_dir +'/tmp/' +self.task_id +'/'
 
 
 	def image_path(self):
@@ -45,7 +45,7 @@ class lm_docker_filesystem:
 		tar file in /$(container_id)/
 		'''
 		os.mkdir(self.workdir())
-		layer_dir = base_dir + 'aufs/diff'
+		layer_dir = base_dir + '/aufs/diff/'
 		container_path = layer_dir + self.container_id
 
 		if not check_dir(container_path):
