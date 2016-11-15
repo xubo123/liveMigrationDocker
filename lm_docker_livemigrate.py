@@ -17,7 +17,7 @@ BUF_SIZE = 1024
 
 #----Get the container information by the container name. (id,label,pid)----#
 def get_container_info(container_name):
-	cli = Client(version='1.22')
+	cli = Client(version='1.21')
 	out = cli.inspect_container(container_name)
 	
 	if 'Error' in out:
@@ -36,7 +36,7 @@ def get_container_info(container_name):
 
 #----Check whether the container is running or not.----#
 def check_container_status(container_id):
-	cli = Client(version='1.22')
+	cli = Client(version='1.21')
 	out = cli.containers(container_id)
 	lines = str(out)
 
@@ -92,12 +92,12 @@ class live_migrate:
 		if not fs_handle.tar_file():
 			logging.error('Error: tar file failed\n')
 			return False
-		image_fs = fs_handle.image_path()
+		fs_image = fs_handle.image_path()
 		msg_fs = 'fs#' + str(os.path.getsize(fs_image)) + '#'
 		lm_socket.send_msg(msg_fs)
-		lm_socket.send_file(image_fs)
+		lm_socket.send_file(fs_image)
 		data = lm_socket.recv_msg()
-		print 'data2' + data
+		print ('data2' + data)
 
 		#----start the pre-copy looper----#
 		pre_time_start = time.time()

@@ -11,13 +11,16 @@ class lm_docker_filesystem:
 	def __init__(self,container_id,task_id):
 		self.container_id = container_id
 		self.task_id = task_id
+		print (container_id)
+		print (task_id)
 		self.fs_tar_name = task_id +'-fs.tar'
 		self.container_tar = 'container.tar'
 		self.container_init_tar = 'container-init.tar'
 
 
 	def tar_file_without_path(self,container_tar,path):
-		os.mkdir(path)
+		if not os.path.isdir(path):
+			os.mkdir(path)
 		tar_file = tarfile.TarFile.open(container_tar,'w')
 		tar_file.add('./')
 		tar_file.close()
@@ -44,7 +47,8 @@ class lm_docker_filesystem:
 		'''
 		tar file in /$(container_id)/
 		'''
-		os.mkdir(self.workdir())
+		if not os.path.isdir(self.workdir()):
+			os.mkdir(self.workdir())
 		layer_dir = base_dir + '/aufs/diff/'
 		container_path = layer_dir + self.container_id
 

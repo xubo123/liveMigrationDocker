@@ -20,7 +20,7 @@ class lm_docker_socket:
 		HOST = dst_ip
 		logging.info('destination ip is %s:' % HOST)
 		self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
+		self.socket.setsockopt(socket.SOL_SOCKET,socket.SO_REUSEADDR,1)
 		try:
 			self.socket.connect((HOST,PORT))
 		except Exception, e:
