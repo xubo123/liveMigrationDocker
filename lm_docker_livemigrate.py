@@ -118,10 +118,12 @@ class live_migrate:
 			#send predump image to the dst node
 			msg_predump = 'predump#' + livemigrate_handle.predump_name() + \
 						  '#' + str(predump_size) + '#'
-			lm_docker_socket.send_msg(msg_predump)
+			logging.info(msg_predump)
+			lm_socket.send_msg(msg_predump)
 			send_predump_image_start = time.time()
-			lm_docker_socket.send_file(predump_image)
-			data = lm_docker_socket.recv_msg()
+			lm_socket.send_file(predump_image)
+			data = lm_socket.recv_msg()
+			logging.info(data)
 			send_predump_image_end = time.time()
 			send_predump_image_time = send_predump_image_end - send_predump_image_start
 			print ('predump image size is : ' + sizeof_format(predump_size))

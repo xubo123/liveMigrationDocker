@@ -81,7 +81,7 @@ class lm_docker_server(SocketServer.BaseRequestHandler):
 				self.send_msg(msg_fs)
 				dst_handle.dst_filesystem()
 				fs_time_end = time.time()
-'''
+			
 			if 'predump' == cmd_type:
 				predump_time_start = time.time()
 				predump_image = self.task_id + str_array[1] +'.tar'
@@ -94,7 +94,7 @@ class lm_docker_server(SocketServer.BaseRequestHandler):
 				self.send_msg(msg_predump)
 				dst_handle.predump_restore(predump_image,str_array[1])
 				predump_time_end = time.time()
-
+'''
 			if 'dump' == cmd_type:
 				dump_time_start = time.time()
 				dump_image = self.task_id + '-mm.tar'
