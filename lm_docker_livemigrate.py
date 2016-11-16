@@ -94,10 +94,14 @@ class live_migrate:
 			return False
 		fs_image = fs_handle.image_path()
 		msg_fs = 'fs#' + str(os.path.getsize(fs_image)) + '#'
+		logging.info(msg_fs)
 		lm_socket.send_msg(msg_fs)
+
+		logging.info('fs send msg closed.')
 		lm_socket.send_file(fs_image)
+		logging.info('fs send closed.')
 		data = lm_socket.recv_msg()
-		print ('data2' + data)
+		logging.info(data)
 
 		#----start the pre-copy looper----#
 		pre_time_start = time.time()
@@ -128,7 +132,8 @@ class live_migrate:
 			if(predump_size <= (predump_size/send_predump_image_time) * 1.5):
 				flag_precopy = False
 				livemigrate_handle.rename()
-
+		return True
+		'''
 		#----do the last step, dump and send the dump image for dst node restore----#
 		precopy_end = time.time()
 
@@ -147,8 +152,8 @@ class live_migrate:
 		lm_docker_socket.send_file(dump_image)
 		data = lm_docker_socket.recv_msg()
 		logging.debug(data)
-		
 		return True
+		'''
 
 
 

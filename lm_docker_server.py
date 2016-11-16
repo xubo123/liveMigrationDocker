@@ -27,7 +27,7 @@ class lm_docker_server(SocketServer.BaseRequestHandler):
 				if not tmp:
 					return False
 				buffer = buffer + tmp
-				length = size - len(buffer)
+				length = file_size - len(buffer)
 
 			hd_file.write(buffer)
 			hd_file.close()
@@ -58,11 +58,17 @@ class lm_docker_server(SocketServer.BaseRequestHandler):
 		if 'init' == cmd_type:
 			self.task_id = str_array[1]
 			self.label = str_array[2]
+			dst_handle.init_dst_node(self.task_id,self.label)
 			self.send_msg('init:success')
 			logging.info('get init msg success.')
 	
 
 		while(True):
+			new_msg = self.recv_msg()
+			logging.info(new_msg)
+			str_array = new_msg.split('#')
+			cmd_type = str_array[0]
+
 			if 'fs' == cmd_type:
 				fs_time_start = time.time()
 				fs_image = self.task_id + '-fs.tar'
@@ -75,7 +81,7 @@ class lm_docker_server(SocketServer.BaseRequestHandler):
 				self.send_msg(msg_fs)
 				dst_handle.dst_filesystem()
 				fs_time_end = time.time()
-
+'''
 			if 'predump' == cmd_type:
 				predump_time_start = time.time()
 				predump_image = self.task_id + str_array[1] +'.tar'
@@ -107,6 +113,6 @@ class lm_docker_server(SocketServer.BaseRequestHandler):
 				self.send_msg('restore:success')
 				break
 				 
-
+'''
 
 

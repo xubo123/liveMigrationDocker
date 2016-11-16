@@ -40,7 +40,7 @@ class lm_docker_filesystem:
 		tar_file = tarfile.TarFile.open(tar,'r')
 		tar_file.extractall(path)
 		tar_file.close()
-		os.remove(tar_file)
+		os.remove(tar)
 
 
 	def tar_file(self):
@@ -106,6 +106,7 @@ class lm_docker_filesystem:
 			logging.error('Error: filesystem %s not exists.' %fs_tar_name)
 			return False
 
+		print(str(fs_tar_name))
 		fs_tar_file = tarfile.TarFile.open(fs_tar_name,'r')
 		fs_tar_file.extractall()
 		fs_tar_file.close()
@@ -119,7 +120,7 @@ class lm_docker_filesystem:
 		'''
 		extract file into /$(container-id)/
 		'''
-		container_path = base_dir + 'aufs/diff/' + self.container_id
+		container_path = base_dir + '/aufs/diff/' + self.container_id
 		if not check_dir(container_path):
 			logging.error('Error: dir %s is not exists.' %container_path)
 			return False

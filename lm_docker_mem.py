@@ -23,7 +23,7 @@ class lm_docker_memory:
 		os.chdir(self.workdir())
 
 	def workdir(self):
-		return base_dir + 'tmp/' +self.task_id + '/'
+		return base_dir + '/tmp/' +self.task_id + '/'
 
 	def predump_name(self):
 		return 'predump' + str(self.predump_count)
