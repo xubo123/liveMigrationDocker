@@ -131,8 +131,13 @@ class live_migrate:
 						'/s')
 
 			#----control whether the pre-copy iteration continue or not----#
+			logging.info('predump_size' + str(predump_size))
+			logging.info('send_predump_image_time' + str(send_predump_image_time))
+			#if(send_predump_image_time < 0.001):
 			if(predump_size <= (predump_size/send_predump_image_time) * 1.5):
 				flag_precopy = False
+				if(False == flag_precopy):
+					logging.info('predump loop end')
 				livemigrate_handle.rename()
 		return True
 		'''

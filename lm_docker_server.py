@@ -85,13 +85,16 @@ class lm_docker_server(SocketServer.BaseRequestHandler):
 			if 'predump' == cmd_type:
 				predump_time_start = time.time()
 				predump_image = self.task_id + str_array[1] +'.tar'
+				logging.info(predump_image)
 				predump_size = int(str_array[2])
+				logging.info(predump_size)
 				msg_predump = 'predump:'
 				if self.recv_file(predump_image,predump_size):
 					msg_predump += 'success'
 				else:
 					msg_predump += 'failed'
 				self.send_msg(msg_predump)
+				logging.info(msg_predump)
 				dst_handle.predump_restore(predump_image,str_array[1])
 				predump_time_end = time.time()
 '''

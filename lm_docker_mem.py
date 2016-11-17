@@ -52,7 +52,7 @@ class lm_docker_memory:
 			if not check_dir(self.workdir() + parent_dir):
 				logging.error('Error: parent dir is not exists.')
 			parent_path = '../' + parent_dir
-			append_cmd = '--prev-images-dir' + parent_path
+			append_cmd = ' --prev-images-dir ' + parent_path
 
 		else:
 			append_cmd = ''
