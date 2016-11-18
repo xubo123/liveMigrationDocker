@@ -103,11 +103,12 @@ class live_migrate:
 		data = lm_socket.recv_msg()
 		logging.info(data)
 
-		#----start the pre-copy looper----#
+		#----start the pre-copy looper, we use pre-copy to decrease the halt time.----#
 		pre_time_start = time.time()
 		livemigrate_handle = lm_docker_memory(self.task_id)
 		flag_precopy = True
 
+		#---- inner loop use criu pre-dump to interarive dump the change memory----#
 		while(flag_precopy):
 			if not livemigrate_handle.predump(self.pid):
 				return False
@@ -139,7 +140,26 @@ class live_migrate:
 				if(False == flag_precopy):
 					logging.info('predump loop end')
 				livemigrate_handle.rename()
+		
+		#----do the last step,dump the change memory and running states, ----#
+		#----send the dump image for dst node to restore the docker container.----#
+		dump_start = time.time()
+		if not livemigrate_handle.dump(self.pid):
+			logging.error('Error: there is something wrong in the last dump step.')
+			return False
+		dump_end = time.time()
+		dump_image = livemigrate_handle.dump_image_path()
+		dump_size = os.path.getsize(dump_image)
+
+		#----send the dump image to the dst node----#
+		msg_dump = 'dump#' + str(dump_size) +'#' +\
+				   livemigrate_handle.predump_name() +'#'
+		lm_docker_socket.send_msg(msg_dump)
+		lm_docker_socket.send_file(dump_image)
+		data = lm_docker_socket.recv_msg()
+		logging.info(data)
 		return True
+
 		'''
 		#----do the last step, dump and send the dump image for dst node restore----#
 		precopy_end = time.time()

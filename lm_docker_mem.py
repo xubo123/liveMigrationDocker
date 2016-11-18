@@ -86,7 +86,7 @@ class lm_docker_memory:
 			return False
 		return True
 
-	
+	'''
 	def dump(self,container):
 		dump_time_start = time.time()
 		logging.debug(container)
@@ -116,5 +116,27 @@ class lm_docker_memory:
 		logging.debug('dump handle time: %f' % (dump_time_start2 - dump_time_start1))
 		logging.debug('dump image pack time: %f' %(dump_time_end - dump_time_start2))
 		return True
-
+	'''
+	def dump(self,pid):
+	#----dump the change memory in last interative, and process tree states.----#
+		dump_time_start = time.time()
+		logging.info('dump the process %s' + str(pid))
+		pre_path = self.workdir() + 'predump'
+		logging.info(pre_path)
+		dump_dir = 'dump'
+		os.mkdir(dump_dir)
+		image_path = self.workdir() + dump_dir
+		
+		dump_sh = 'criu dump -o dump.log -v2 -t ' + str(pid) +\
+				  +' --images-dir ' + dump_dir + ' --track-mem --prev-images-dir' +\
+				  pre_path
+		logging.info(dump_sh)
+		
+		out_msg = sp.call(dump_sh, shell=True)
+		if out_msg:
+			logging.error('Error: criu dump failed')
+			return False
+		name = self.task_id + '-' + dump_dir +'.tar'
+		self.tar_image(self.workdir(),name,dump_dir)
+		return True
 	
