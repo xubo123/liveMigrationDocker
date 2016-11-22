@@ -153,10 +153,11 @@ class live_migrate:
 
 		#----send the dump image to the dst node----#
 		msg_dump = 'dump#' + str(dump_size) +'#' +\
-				   livemigrate_handle.predump_name() +'#'
-		lm_docker_socket.send_msg(msg_dump)
-		lm_docker_socket.send_file(dump_image)
-		data = lm_docker_socket.recv_msg()
+				   livemigrate_handle.predump_name() +'#' +\
+                   str(self.pid) +'#'
+		lm_socket.send_msg(msg_dump)
+		lm_socket.send_file(dump_image)
+		data = lm_socket.recv_msg()
 		logging.info(data)
 		return True
 

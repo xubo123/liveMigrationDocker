@@ -7,7 +7,7 @@ from lm_docker_check import lm_docker_check
 #from lm_docker_overlay import overlay
 from lm_docker_livemigrate import live_migrate
 from lm_docker_service import server_node
-
+from lm_docker_client import lm_docker_socket
 
 lm_docker_version = '0.1'
 lm_docker_info = 'live migration on docker'
