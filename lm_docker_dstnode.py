@@ -89,8 +89,19 @@ class destination_node:
 			return False
 		return True
 	
+	def dst_filesystem(self):
+		dst_fs = lm_docker_filesystem(self.container_id, self.task_id)
+		if dst_fs.extract_file() is False:
+			logging.error('Error: filesystem is destination node restore failed.')
+			return False
+		return True
 
+	def predump_restore(self, predump_image_name, predump_dir):
+		self.untar_image(predump_image_name, predump_dir)
+	
+	
 '''
+
 	def restore(self,dump_image_name):
 		self.untar_image(dump_image_name,'dump')
 		image_dir = self.workdir() + '/dump'
@@ -105,9 +116,10 @@ class destination_node:
 			logging.error('docker restore failed.')
 			return False
 		return True
-'''
 
 
+
+	
 	def dst_filesystem(self):
 		dst_fs = lm_docker_filesystem(self.container_id, self.task_id)
 		if dst_fs.extract_file() is False:
@@ -121,4 +133,4 @@ class destination_node:
 
 
 
-
+'''

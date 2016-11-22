@@ -70,7 +70,7 @@ class lm_docker_memory:
 		self.tar_image(self.workdir(),name,dir_name)
 		return True
 
-	
+
 	def tar_image(self,image_dir,name,path):
 		os.chdir(image_dir)
 		os.chdir(path)
@@ -90,7 +90,7 @@ class lm_docker_memory:
 	def dump(self,container):
 		dump_time_start = time.time()
 		logging.debug(container)
-        
+
 		pre_path = self.workdir() + './predump'
 		if not check_dir(pre_path):
 			logging.debug('pre image is not exists.')
@@ -102,7 +102,7 @@ class lm_docker_memory:
 				  ' ' + ' --work-dir=' + image_path + \
 				  ' -allow-tcp=true ' + container
 		logging.debug(dump_sh)
-		
+
 		out_msg = sp.call(dump_sh, shell=True)
 		if out_msg:
 			logging.error('Error: docker checkpoint failed.')
@@ -119,24 +119,41 @@ class lm_docker_memory:
 	'''
 	def dump(self,pid):
 	#----dump the change memory in last interative, and process tree states.----#
+		os.chdir(self.workdir())
 		dump_time_start = time.time()
 		logging.info('dump the process %s' + str(pid))
-		pre_path = self.workdir() + 'predump'
+		pre_path = '../predump'
 		logging.info(pre_path)
 		dump_dir = 'dump'
 		os.mkdir(dump_dir)
 		image_path = self.workdir() + dump_dir
-		
-		dump_sh = 'criu dump -o dump.log -v2 -t ' + str(pid) +\
-				  +' --images-dir ' + dump_dir + ' --track-mem --prev-images-dir' +\
-				  pre_path
+
+		dump_sh = 'criu dump -o dump.log -v2 -t ' + \
+				  str(pid) +' --images-dir ' + dump_dir + ' --track-mem --prev-images-dir ' + \
+                  pre_path +' --shell-job --ext-mount-map /sys/fs/cgroup/memory:/sys/fs/cgroup/memory' +\
+                  ' --ext-mount-map /sys/fs/cgroup/devices:/sys/fs/cgroup/devices' +\
+                  ' --ext-mount-map /sys/fs/cgroup/freezer:/sys/fs/cgroup/freezer' +\
+                  ' --ext-mount-map /sys/fs/cgroup/net_cls:/sys/fs/cgroup/net_cls' +\
+                  ' --ext-mount-map /sys/fs/cgroup/perf_event:/sys/fs/cgroup/perf_event' +\
+                  ' --ext-mount-map /sys/fs/cgroup/net_prio:/sys/fs/cgroup/net_prio' +\
+                  ' --ext-mount-map /sys/fs/cgroup/hugetlb:/sys/fs/cgroup/hugetlb' +\
+                  ' --ext-mount-map /etc/hosts:/etc/hosts' +\
+                  ' --ext-mount-map /etc/hostname:/etc/hostname' +\
+                  ' --ext-mount-map /etc/resolv.conf:/etc/resolv.conf' +\
+                  ' --ext-mount-map /sys/fs/cgroup/blkio:sys/fs/cgroup/blkio' +\
+                  ' --ext-mount-map /sys/fs/cgroup/cpuacct:/sys/fs/cgroup/cpuacct' +\
+                  ' --ext-mount-map /sys/fs/cgroup/cpu:/sys/fs/cgroup/cpu' +\
+                  ' --ext-mount-map /sys/fs/cgroup/cpuset:/sys/fs/cgroup/cpuset' +\
+                  ' --ext-mount-map /sys/fs/cgroup/systemd:/sys/fs/cgroup/systemd'
 		logging.info(dump_sh)
-		
+
 		out_msg = sp.call(dump_sh, shell=True)
+		logging.info(out_msg)
+
 		if out_msg:
 			logging.error('Error: criu dump failed')
 			return False
 		name = self.task_id + '-' + dump_dir +'.tar'
 		self.tar_image(self.workdir(),name,dump_dir)
 		return True
-	
+
