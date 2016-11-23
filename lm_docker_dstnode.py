@@ -77,24 +77,28 @@ class destination_node:
 		return True
 
 	def restore(self,pid,dump_image_name):
+		os.chdir(self.workdir())
 		self.untar_image(dump_image_name, 'dump')
-		image_dir = self.workdir() + '/dump'
-		restore_sh = 'criu restore -t ' + pid +' --images-dir ' +\
-					 image_dir +' --shell-job --ext-mount-map /sys/fs/cgroup/memory:/sys/fs/cgroup/memory' +\
-		             ' --ext-mount-map /sys/fs/cgroup/devices:/sys/fs/cgroup/devices' +\
-		             ' --ext-mount-map /sys/fs/cgroup/freezer:/sys/fs/cgroup/freezer' +\
-		             ' --ext-mount-map /sys/fs/cgroup/net_cls:/sys/fs/cgroup/net_cls' +\
-		             ' --ext-mount-map /sys/fs/cgroup/perf_event:/sys/fs/cgroup/perf_event' +\
-		             ' --ext-mount-map /sys/fs/cgroup/net_prio:/sys/fs/cgroup/net_prio' +\
-		             ' --ext-mount-map /sys/fs/cgroup/hugetlb:/sys/fs/cgroup/hugetlb' +\
-		             ' --ext-mount-map /etc/hosts:/etc/hosts' +\
-		             ' --ext-mount-map /etc/hostname:/etc/hostname' +\
-		             ' --ext-mount-map /etc/resolv.conf:/etc/resolv.conf' +\
-		             ' --ext-mount-map /sys/fs/cgroup/blkio:sys/fs/cgroup/blkio' +\
-		             ' --ext-mount-map /sys/fs/cgroup/cpuacct:/sys/fs/cgroup/cpuacct' +\
-		             ' --ext-mount-map /sys/fs/cgroup/cpu:/sys/fs/cgroup/cpu' +\
-		             ' --ext-mount-map /sys/fs/cgroup/cpuset:/sys/fs/cgroup/cpuset' +\
-		             ' --ext-mount-map /sys/fs/cgroup/systemd:/sys/fs/cgroup/systemd'
+		image_dir = 'dump'
+		restore_sh = 'criu restore --tree ' + pid + ' --images-dir ' +\
+					 image_dir + ' --ext-mount-map auto'
+#image_dir = self.workdir() + '/dump'
+#		restore_sh = 'criu restore --tree ' + pid +' --images-dir ' +\
+#					 image_dir +' --shell-job --ext-mount-map /sys/fs/cgroup/memory:/sys/fs/cgroup/memory' +\
+#		             ' --ext-mount-map /sys/fs/cgroup/devices:/sys/fs/cgroup/devices' +\
+#		             ' --ext-mount-map /sys/fs/cgroup/freezer:/sys/fs/cgroup/freezer' +\
+#		             ' --ext-mount-map /sys/fs/cgroup/net_cls:/sys/fs/cgroup/net_cls' +\
+#		             ' --ext-mount-map /sys/fs/cgroup/perf_event:/sys/fs/cgroup/perf_event' +\
+#		             ' --ext-mount-map /sys/fs/cgroup/net_prio:/sys/fs/cgroup/net_prio' +\
+#		             ' --ext-mount-map /sys/fs/cgroup/hugetlb:/sys/fs/cgroup/hugetlb' +\
+#		             ' --ext-mount-map /etc/hosts:/etc/hosts' +\
+#		             ' --ext-mount-map /etc/hostname:/etc/hostname' +\
+#		             ' --ext-mount-map /etc/resolv.conf:/etc/resolv.conf' +\
+#		             ' --ext-mount-map /sys/fs/cgroup/blkio:/sys/fs/cgroup/blkio' +\
+#		             ' --ext-mount-map /sys/fs/cgroup/cpuacct:/sys/fs/cgroup/cpuacct' +\
+#		             ' --ext-mount-map /sys/fs/cgroup/cpu:/sys/fs/cgroup/cpu' +\
+#		             ' --ext-mount-map /sys/fs/cgroup/cpuset:/sys/fs/cgroup/cpuset' +\
+#		             ' --ext-mount-map /sys/fs/cgroup/systemd:/sys/fs/cgroup/systemd'
 		logging.info(restore_sh)
 		ret = sp.call(restore_sh, shell=True)
 		logging.info(ret)
