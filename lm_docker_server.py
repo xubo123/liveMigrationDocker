@@ -105,8 +105,8 @@ class lm_docker_server(SocketServer.BaseRequestHandler):
 				last_predump_dir = str_array[2]
 				dump_pid = str_array[3]
 
-				if last_predump_dir != 'pre0':
-					os.rename(last_predump_dir, 'pre')
+				if last_predump_dir != 'predump0':
+					os.rename(last_predump_dir, 'predump')
 				msg_dump = 'dump:'
 				if self.recv_file(dump_image,dump_size):
 					msg_dump += 'success'

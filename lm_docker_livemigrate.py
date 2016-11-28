@@ -107,12 +107,13 @@ class live_migrate:
 		pre_time_start = time.time()
 		livemigrate_handle = lm_docker_memory(self.task_id)
 		flag_precopy = True
+		count = 1
 
 		#---- inner loop use criu pre-dump to interarive dump the change memory----#
 		while(flag_precopy):
 			if not livemigrate_handle.predump(self.pid):
 				return False
-			
+			count+=1
 			predump_image = livemigrate_handle.predump_image_path()
 			predump_size = os.path.getsize(predump_image)
 			
@@ -135,7 +136,8 @@ class live_migrate:
 			logging.info('predump_size' + str(predump_size))
 			logging.info('send_predump_image_time' + str(send_predump_image_time))
 			#if(send_predump_image_time < 0.001):
-			if(predump_size <= (predump_size/send_predump_image_time) * 1.5):
+			if (count== 5):
+			#if(predump_size <= (predump_size/send_predump_image_time) * 1.5):
 				flag_precopy = False
 				if(False == flag_precopy):
 					logging.info('predump loop end')

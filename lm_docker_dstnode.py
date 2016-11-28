@@ -80,6 +80,8 @@ class destination_node:
 		os.chdir(self.workdir())
 		self.untar_image(dump_image_name, 'dump')
 		image_dir = 'dump'
+#	restore_sh = 'sudo docker restore --force=true --allow-tcp=true --work-dir=' +\
+#					 image_dir + ' --image-dir='
 		restore_sh = 'sudo criu restore -o /var/lib/docker/restore.log -v4 --tree ' + pid + ' --images-dir ' +\
 					 image_dir + ' --ext-mount-map auto'
 #image_dir = self.workdir() + '/dump'
