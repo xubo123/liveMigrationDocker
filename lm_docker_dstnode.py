@@ -80,7 +80,7 @@ class destination_node:
 		os.chdir(self.workdir())
 		self.untar_image(dump_image_name, 'dump')
 		image_dir = 'dump'
-		restore_sh = 'criu restore --tree ' + pid + ' --images-dir ' +\
+		restore_sh = 'sudo criu restore -o /var/lib/docker/restore.log -v4 --tree ' + pid + ' --images-dir ' +\
 					 image_dir + ' --ext-mount-map auto'
 #image_dir = self.workdir() + '/dump'
 #		restore_sh = 'criu restore --tree ' + pid +' --images-dir ' +\
@@ -100,7 +100,10 @@ class destination_node:
 #		             ' --ext-mount-map /sys/fs/cgroup/cpuset:/sys/fs/cgroup/cpuset' +\
 #		             ' --ext-mount-map /sys/fs/cgroup/systemd:/sys/fs/cgroup/systemd'
 		logging.info(restore_sh)
-		ret = sp.call(restore_sh, shell=True)
+		p = sp.Popen(restore_sh,shell=True,stdin=sp.PIPE,stdout=sp.PIPE,stderr=sp.PIPE)
+		p.stdin.write('123456\n')
+		ret = p.wait()
+#ret = sp.call(restore_sh, shell=True,stdin=sp.PIPE)
 		logging.info(ret)
 		if ret:
 			logging.error('criu restore failed.')
