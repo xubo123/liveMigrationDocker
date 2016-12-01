@@ -146,7 +146,7 @@ class live_migrate:
 		#----do the last step,dump the change memory and running states, ----#
 		#----send the dump image for dst node to restore the docker container.----#
 		dump_start = time.time()
-		if not livemigrate_handle.dump(self.pid):
+		if not livemigrate_handle.dump(self.pid,self.container_id):
 			logging.error('Error: there is something wrong in the last dump step.')
 			return False
 		dump_end = time.time()
