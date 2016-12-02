@@ -1644,7 +1644,7 @@ static int restore_root_task(struct pstree_item *init)
 		return -1;
 	}
 
-	ret = install_service_fd(CR_PROC_FD_OFF, fd);
+	ret = (CR_PROC_FD_OFF, fd);
 	close(fd);
 	if (ret < 0)
 		return -1;

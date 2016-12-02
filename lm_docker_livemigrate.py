@@ -156,7 +156,8 @@ class live_migrate:
 		#----send the dump image to the dst node----#
 		msg_dump = 'dump#' + str(dump_size) +'#' +\
 				   livemigrate_handle.predump_name() +'#' +\
-                   str(self.pid) +'#'
+                   str(self.pid) +'#'+\
+				   self.container_id +'#'
 		lm_socket.send_msg(msg_dump)
 		lm_socket.send_file(dump_image)
 		data = lm_socket.recv_msg()

@@ -104,6 +104,7 @@ class lm_docker_server(SocketServer.BaseRequestHandler):
 				dump_size = int(str_array[1])
 				last_predump_dir = str_array[2]
 				dump_pid = str_array[3]
+				last_container_id = str_array[4]
 
 				if last_predump_dir != 'predump0':
 					os.rename(last_predump_dir, 'predump')
@@ -114,7 +115,7 @@ class lm_docker_server(SocketServer.BaseRequestHandler):
 					msg_dump += 'failed'
 				self.send_msg(msg_dump)
 				logging.info(msg_dump)
-				dst_handle.restore(dump_pid,dump_image)
+				dst_handle.restore(dump_pid,dump_image,last_container_id)
 				dump_time_end = time.time()
 				self.send_msg('restore:success')
 				break

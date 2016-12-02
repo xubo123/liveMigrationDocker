@@ -76,10 +76,103 @@ class destination_node:
 		os.chdir('../')
 		return True
 
-	def restore(self,pid,dump_image_name):
+	def restore(self,pid,dump_image_name,last_container_id):
+		logging.info('last container id is %s ' %last_container_id)
 		os.chdir(self.workdir())
 		self.untar_image(dump_image_name, 'dump')
 		image_dir = self.workdir() + '/dump'
+
+		mount_sh = 'sudo mount -t aufs -o br=/var/lib/docker/aufs/diff/' + self.container_id +\
+				   ':/var/lib/docker/aufs/diff/' + self.container_id +'-init' +\
+				   ' none /var/lib/docker/aufs/mnt/' + self.container_id
+
+		logging.info(mount_sh)
+		p = sp.Popen(mount_sh,shell=True,stdin=sp.PIPE,stdout=sp.PIPE,stderr=sp.PIPE)
+		p.stdin.write('123456\n')
+		ret = p.wait()
+		logging.info(ret)
+		if ret:
+			logging.error('mount aufs failed.')
+			return False
+
+		'''
+		do the map operate to the cgroup.img and mounts-12.img
+		'''
+		cgroup_log = '/var/lib/docker/cgroup.log'
+		decode_sh = 'sudo /home/hdq/criu/crit/crit decode -i ' + image_dir +\
+					'/cgroup.img -o ' + cgroup_log
+		
+		p = sp.Popen(decode_sh,shell=True,stdin=sp.PIPE,stdout=sp.PIPE,stderr=sp.PIPE)
+		p.stdin.write('123456\n')
+		ret = p.wait()
+		logging.info(ret)
+		if ret:
+			logging.error('decode failed.')
+			return False
+		
+#		if not os.path.exists(cgroup_log):
+#			return False
+#		lines = open(cgroup_log).readlines()
+#		fp = open(cgroup_log,'w')
+#		for s in lines:
+#			fp.write(s.replace(last_container_id,self.container_id))
+#		fp.close()
+
+		sed_sh = 'sudo sed -i \"s/' + last_container_id +'/' + self.container_id +\
+				 '/g\" ' + cgroup_log
+		logging.info(sed_sh)
+		sp.call(sed_sh,shell=True)
+
+		encode_sh = 'sudo /home/hdq/criu/crit/crit encode -i ' + cgroup_log +\
+					' -o ' + image_dir + '/cgroup.img'
+		logging.info(encode_sh)	
+		p = sp.Popen(encode_sh,shell=True,stdin=sp.PIPE,stdout=sp.PIPE,stderr=sp.PIPE)
+		p.stdin.write('123456\n')
+		ret = p.wait()
+		logging.info(ret)
+		if ret:
+			logging.error('encode failed.')
+			return False
+
+		mounts_log = '/var/lib/docker/mounts.log'
+		decode_sh = 'sudo /home/hdq/criu/crit/crit decode -i ' + image_dir +\
+					'/mountpoints-12.img -o ' + mounts_log
+	
+
+		p = sp.Popen(decode_sh,shell=True,stdin=sp.PIPE,stdout=sp.PIPE,stderr=sp.PIPE)
+		p.stdin.write('123456\n')
+		ret = p.wait()
+		logging.info(ret)
+		if ret:
+			logging.error('decode failed.')
+			return False
+		
+#		if not os.path.exists(mounts_log):
+#			return False
+#		lines = open(mounts_log).readlines()
+#		fp = open(mounts_log,'w')
+#		for s in lines:
+#			fp.write(s.replace(last_container_id,self.container_id))
+#		fp.close()
+		sed_sh = 'sudo sed -i \"s/' + last_container_id +'/' + self.container_id +\
+				 '/g\" ' + mounts_log
+		logging.info(sed_sh)
+		sp.call(sed_sh,shell=True)
+
+		encode_sh = 'sudo /home/hdq/criu/crit/crit encode -i ' + mounts_log +\
+					' -o ' + image_dir + '/mountpoints-12.img'
+		logging.info(encode_sh)
+		p = sp.Popen(encode_sh,shell=True,stdin=sp.PIPE,stdout=sp.PIPE,stderr=sp.PIPE)
+		p.stdin.write('123456\n')
+		ret = p.wait()
+		logging.info(ret)
+		if ret:
+			logging.error('encode failed.')
+			return False
+
+
+
+
 
 		restore_sh = 'sudo criu restore -o /var/lib/docker/restore.log -v4 -d -D ' +\
 					 image_dir + ' --manage-cgroups --evasive-devices --ext-mount-map auto --root /var/lib/docker/aufs/mnt/'+\
