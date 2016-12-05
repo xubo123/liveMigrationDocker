@@ -31,7 +31,7 @@ class lm_docker_filesystem:
 
 
 	def workdir(self):
-		return base_dir +'/tmp/' +self.task_id +'/'
+		return base_dir +'/tmp1/' +self.task_id +'/'
 
 
 	def image_path(self):

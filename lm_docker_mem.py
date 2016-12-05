@@ -23,7 +23,7 @@ class lm_docker_memory:
 		os.chdir(self.workdir())
 
 	def workdir(self):
-		return base_dir + '/tmp/' +self.task_id + '/'
+		return base_dir + '/tmp1/' +self.task_id + '/'
 
 	def predump_name(self):
 		return 'predump' + str(self.predump_count)
@@ -57,7 +57,7 @@ class lm_docker_memory:
 		else:
 			append_cmd = ''
 
-		predump_sh = 'criu pre-dump -o dump.log -v2 -t ' + \
+		predump_sh = 'criu pre-dump -o predump.log -v2 -t ' + \
 					 str(pid) + ' --images-dir ' + dir_name + append_cmd
 		logging.info(predump_sh)
 
@@ -130,7 +130,23 @@ class lm_docker_memory:
 
 		dump_sh = 'criu dump -o /var/lib/docker/dump.log -v4 -t ' +\
 				  str(pid) + ' -D ' + dump_dir +' --root /var/lib/docker/aufs/mnt/' +\
-				  str(container_id) + ' --manage-cgroups --evasive-devices --ext-mount-map auto'
+				  str(container_id) + ' --manage-cgroups --evasive-devices' +\
+				  ' --ext-mount-map /etc/hosts:/etc/hosts' +\
+				  ' --ext-mount-map /etc/hostname:/etc/hostname' +\
+				  ' --ext-mount-map /etc/resolv.conf:/etc/resolv.conf' +\
+				  ' --ext-mount-map /.dockerinit:/.dockerinit' +\
+				  ' --ext-mount-map /sys/fs/cgroup/memory:/sys/fs/cgroup/memory' +\
+				  ' --ext-mount-map /sys/fs/cgroup/blkio:/sys/fs/cgroup/blkio' +\
+				  ' --ext-mount-map /sys/fs/cgroup/freezer:/sys/fs/cgroup/freezer' +\
+				  ' --ext-mount-map /sys/fs/cgroup/hugetlb:/sys/fs/cgroup/hugetlb' +\
+				  ' --ext-mount-map /sys/fs/cgroup/devices:/sys/fs/cgroup/devices' +\
+				  ' --ext-mount-map /sys/fs/cgroup/cpu:/sys/fs/cgroup/cpu' +\
+				  ' --ext-mount-map /sys/fs/cgroup/cpuset:/sys/fs/cgroup/cpuset' +\
+				  ' --ext-mount-map /sys/fs/cgroup/cpuacct:/sys/fs/cgroup/cpuacct' +\
+				  ' --ext-mount-map /sys/fs/cgroup/net_cls:/sys/fs/cgroup/net_cls' +\
+				  ' --ext-mount-map /sys/fs/cgroup/net_prio:/sys/fs/cgroup/net_prio' +\
+				  ' --ext-mount-map /sys/fs/cgroup/perf_event:/sys/fs/cgroup/perf_event' +\
+				  ' --ext-mount-map /sys/fs/cgroup/systemd:/sys/fs/cgroup/systemd'
 
 
 #	dump_sh = 'criu dump -o dump.log -v2 -t ' + \

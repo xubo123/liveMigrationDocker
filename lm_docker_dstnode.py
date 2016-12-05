@@ -23,12 +23,12 @@ class destination_node:
 	
 	#init the class, step in the docker dir.
 	def __init__(self):
-		os.chdir(base_dir + '/tmp/')
+		os.chdir(base_dir + '/tmp1/')
 
 	
 	#get the extractly container dir.
 	def workdir(self):
-		return base_dir + '/tmp/' + self.task_id
+		return base_dir + '/tmp1/' + self.task_id
 
 
 	def init_dst_node(self, task_id, label):
@@ -84,6 +84,8 @@ class destination_node:
 
 		mount_sh = 'sudo mount -t aufs -o br=/var/lib/docker/aufs/diff/' + self.container_id +\
 				   ':/var/lib/docker/aufs/diff/' + self.container_id +'-init' +\
+				   ':/var/lib/docker/aufs/diff/9967c5ad88de8c101809f7f22d4774b6791fe46ac3033d57abf7ebb1dd8e36ee' +\
+				   ':/var/lib/docker/aufs/diff/a61cd723bcf2b0ccaaa3b8f779dfca17040bd459d9e615b82a7ea17993ec59f2' +\
 				   ' none /var/lib/docker/aufs/mnt/' + self.container_id
 
 		logging.info(mount_sh)
@@ -98,9 +100,8 @@ class destination_node:
 		'''
 		do the map operate to the cgroup.img and mounts-12.img
 		'''
-		cgroup_log = '/var/lib/docker/cgroup.log'
-		decode_sh = 'sudo /home/hdq/criu/crit/crit decode -i ' + image_dir +\
-					'/cgroup.img -o ' + cgroup_log
+		decode_sh = 'sudo ' + crit_bin + ' decode -i ' + image_dir +\
+					cgroup_img + ' -o ' + cgroup_log
 		
 		p = sp.Popen(decode_sh,shell=True,stdin=sp.PIPE,stdout=sp.PIPE,stderr=sp.PIPE)
 		p.stdin.write('123456\n')
@@ -123,8 +124,8 @@ class destination_node:
 		logging.info(sed_sh)
 		sp.call(sed_sh,shell=True)
 
-		encode_sh = 'sudo /home/hdq/criu/crit/crit encode -i ' + cgroup_log +\
-					' -o ' + image_dir + '/cgroup.img'
+		encode_sh = 'sudo ' + crit_bin + ' encode -i ' + cgroup_log +\
+					' -o ' + image_dir + cgroup_img
 		logging.info(encode_sh)	
 		p = sp.Popen(encode_sh,shell=True,stdin=sp.PIPE,stdout=sp.PIPE,stderr=sp.PIPE)
 		p.stdin.write('123456\n')
@@ -134,9 +135,8 @@ class destination_node:
 			logging.error('encode failed.')
 			return False
 
-		mounts_log = '/var/lib/docker/mounts.log'
-		decode_sh = 'sudo /home/hdq/criu/crit/crit decode -i ' + image_dir +\
-					'/mountpoints-12.img -o ' + mounts_log
+		decode_sh = 'sudo ' + crit_bin + ' decode -i ' + image_dir +\
+					mount_img + ' -o ' + mount_log
 	
 
 		p = sp.Popen(decode_sh,shell=True,stdin=sp.PIPE,stdout=sp.PIPE,stderr=sp.PIPE)
@@ -155,12 +155,12 @@ class destination_node:
 #			fp.write(s.replace(last_container_id,self.container_id))
 #		fp.close()
 		sed_sh = 'sudo sed -i \"s/' + last_container_id +'/' + self.container_id +\
-				 '/g\" ' + mounts_log
+				 '/g\" ' + mount_log
 		logging.info(sed_sh)
 		sp.call(sed_sh,shell=True)
 
-		encode_sh = 'sudo /home/hdq/criu/crit/crit encode -i ' + mounts_log +\
-					' -o ' + image_dir + '/mountpoints-12.img'
+		encode_sh = 'sudo ' + crit_bin +' encode -i ' + mount_log +\
+					' -o ' + image_dir + mount_img
 		logging.info(encode_sh)
 		p = sp.Popen(encode_sh,shell=True,stdin=sp.PIPE,stdout=sp.PIPE,stderr=sp.PIPE)
 		p.stdin.write('123456\n')
@@ -175,13 +175,23 @@ class destination_node:
 
 
 		restore_sh = 'sudo criu restore -o /var/lib/docker/restore.log -v4 -d -D ' +\
-					 image_dir + ' --manage-cgroups --evasive-devices --ext-mount-map auto --root /var/lib/docker/aufs/mnt/'+\
+					 image_dir + ' --manage-cgroups --evasive-devices --root /var/lib/docker/aufs/mnt/'+\
 					 self.container_id + ' --ext-mount-map /etc/hostname:/var/lib/docker/containers/' +\
 					 self.container_id + '/hostname --ext-mount-map /etc/hosts:/var/lib/docker/containers/' +\
-					 self.container_id + '/hosts --ext-mount-map /var/run/resolvconf/resolv.conf:/var/lib/docker/containers/' +\
-					 self.container_id + '/resolv.conf'
-
-					 
+					 self.container_id + '/hosts --ext-mount-map /etc/resolv.conf:/var/lib/docker/containers/' +\
+					 self.container_id + '/resolv.conf' +\
+				     ' --ext-mount-map /sys/fs/cgroup/memory:/sys/fs/cgroup/memory' +\
+				     ' --ext-mount-map /sys/fs/cgroup/blkio:/sys/fs/cgroup/blkio' +\
+				     ' --ext-mount-map /sys/fs/cgroup/freezer:/sys/fs/cgroup/freezer' +\
+				     ' --ext-mount-map /sys/fs/cgroup/hugetlb:/sys/fs/cgroup/hugetlb' +\
+				     ' --ext-mount-map /sys/fs/cgroup/devices:/sys/fs/cgroup/devices' +\
+				     ' --ext-mount-map /sys/fs/cgroup/cpu:/sys/fs/cgroup/cpu' +\
+				     ' --ext-mount-map /sys/fs/cgroup/cpuset:/sys/fs/cgroup/cpuset' +\
+				     ' --ext-mount-map /sys/fs/cgroup/cpuacct:/sys/fs/cgroup/cpuacct' +\
+					 ' --ext-mount-map /sys/fs/cgroup/net_cls:/sys/fs/cgroup/net_cls' +\
+				     ' --ext-mount-map /sys/fs/cgroup/net_prio:/sys/fs/cgroup/net_prio' +\
+				     ' --ext-mount-map /sys/fs/cgroup/perf_event:/sys/fs/cgroup/perf_event' +\
+				     ' --ext-mount-map /sys/fs/cgroup/systemd:/sys/fs/cgroup/systemd'
 #		restore_sh = 'sudo criu restore -o /var/lib/docker/restore.log -v4 --tree ' + pid + ' --images-dir ' +\
 #					 image_dir + ' --ext-mount-map auto'
 #       image_dir = self.workdir() + '/dump'

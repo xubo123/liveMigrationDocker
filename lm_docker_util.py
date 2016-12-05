@@ -10,7 +10,11 @@ import subprocess as sp
 
 base_dir = '/var/lib/docker'
 PORT = 10019
-
+cgroup_log = '/var/lib/docker/cgroup.log'
+mount_log = '/var/lib/docker/mount.log'
+crit_bin = '/home/hdq/criu/crit/crit'
+cgroup_img = '/cgroup.img'
+mount_img = '/mountpoints-12.img'
 
 def isBlank(inString):
 	if inString and inString.strip():
