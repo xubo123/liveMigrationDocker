@@ -23,12 +23,12 @@ class destination_node:
 	
 	#init the class, step in the docker dir.
 	def __init__(self):
-		os.chdir(base_dir + '/tmp1/')
+		os.chdir(base_dir + '/tmp/')
 
 	
 	#get the extractly container dir.
 	def workdir(self):
-		return base_dir + '/tmp1/' + self.task_id
+		return base_dir + '/tmp/' + self.task_id
 
 
 	def init_dst_node(self, task_id, label):
