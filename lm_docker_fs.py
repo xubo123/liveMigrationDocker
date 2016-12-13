@@ -11,17 +11,16 @@ class lm_docker_filesystem:
 	def __init__(self,container_id,task_id):
 		self.container_id = container_id
 		self.task_id = task_id
-		print (container_id)
-		print (task_id)
 		self.fs_tar_name = task_id +'-fs.tar'
 		self.container_tar = 'container.tar'
 		self.container_init_tar = 'container-init.tar'
-		self.bind_tar='bind.tar'
+		self.bind_tar = 'bind.tar'
+		self.mount_tar = 'mount.tar'
 
 
 	def tar_file_without_path(self,container_tar,path):
 		os.chdir(path)
-		logging.info('tar path %s' %path)
+		logging.debug('tar path %s' %path)
 		tar_file = tarfile.TarFile.open(container_tar,'w')
 		tar_file.add('./')
 		tar_file.close()
@@ -74,6 +73,7 @@ class lm_docker_filesystem:
 		self.tar_file_without_path(container_init_tar,container_init_path)
 
 
+
 		'''
 		tar file in /var/lib/docker/containers/$(container-id)
 		'''
@@ -84,9 +84,23 @@ class lm_docker_filesystem:
 			logging.error('Error: file path %s not exists' %bind_path)
 			return False
 		bind_tar = self.bind_tar
-		logging.info('bind path %s' %bind_path)
 		self.tar_file_without_path(bind_tar,bind_path)
-		logging.info('tar bind path success')
+
+
+
+		'''
+		tar rootfs mountpoint file in /var/lib/docker/aufs/mnt/container-id
+		'''
+		mount_dir = base_dir + '/aufs/mnt/'
+		mount_path = mount_dir + self.container_id
+
+		if not check_dir(mount_path):
+			logging.error('Error: file path %s not exists' %mount_path)
+			return False
+		mount_tar = self.mount_tar
+		self.tar_file_without_path(mount_tar,mount_path)
+
+
 
 
 		'''
@@ -102,6 +116,7 @@ class lm_docker_filesystem:
 		fs_tar_file.add(container_tar)
 		fs_tar_file.add(container_init_tar)
 		fs_tar_file.add(bind_tar)
+		fs_tar_file.add(mount_tar)
 		fs_tar_file.close()
 
 		if not check_file(fs_tar_name):
@@ -111,6 +126,7 @@ class lm_docker_filesystem:
 		os.remove(container_tar)
 		os.remove(container_init_tar)
 		os.remove(bind_tar)
+		os.remove(mount_tar)
 		return True
 
 
@@ -133,8 +149,9 @@ class lm_docker_filesystem:
 		container_tar = self.container_tar
 		container_init_tar = self.container_init_tar
 		bind_tar = self.bind_tar
+		mount_tar = self.mount_tar
 		if not (check_file(container_tar) and check_file(container_init_tar) \
-					and check_file(bind_tar)):
+					and check_file(bind_tar) and check_file(mount_tar)):
 			logging.error('Error: filesystem extract file failed, fs not exists.')
 			return False
 
@@ -164,8 +181,18 @@ class lm_docker_filesystem:
 		bind_path = base_dir + '/containers/' + self.container_id
 		if not check_dir(bind_path):
 			logging.error('Error: dir %s is not exists.' %bind_path)
-			return false
+			return False
 		self.extract_file_to_path(bind_tar,bind_path)
+
+		'''
+		extract file into /var/lib/docker/aufs/mnt/$(container_id)/
+		'''
+		mount_path = base_dir + '/aufs/mnt/' + self.container_id
+		if not check_dir(mount_path):
+			logging.error('Error: dir %s is not exists.' %mount_path)
+			return False
+		self.extract_file_to_path(mount_tar,mount_path)
+
 
 		return True
 

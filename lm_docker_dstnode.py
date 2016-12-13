@@ -45,14 +45,8 @@ class destination_node:
 		logging.debug('The docker image id is %s' %image_id)
 		logging.debug(label_array)
 
-#		cmd_sh = 'docker run --name=livemigrate -d ' + base_image +\
-#					 ' tail -f /dev/null && docker rm -f livemigrate'
-#		logging.info(cmd_sh)
-#		logging.debug(cmd_sh)
-#		os.system(cmd_sh)
 
 		rmv_sh = 'docker rm -f ' + container_name +' >/dev/null 2>&1'
-		logging.info(rmv_sh)
 		logging.debug(rmv_sh)
 		os.system(rmv_sh)
 
@@ -81,18 +75,19 @@ class destination_node:
 		os.chdir(self.workdir())
 		self.untar_image(dump_image_name, 'dump')
 		image_dir = self.workdir() + '/dump'
+		restore_dir = 'dump'
 
 		mount_sh = 'sudo mount -t aufs -o br=/var/lib/docker/aufs/diff/' + self.container_id +\
 				   ':/var/lib/docker/aufs/diff/' + self.container_id +'-init' +\
-				   ':/var/lib/docker/aufs/diff/9967c5ad88de8c101809f7f22d4774b6791fe46ac3033d57abf7ebb1dd8e36ee' +\
 				   ':/var/lib/docker/aufs/diff/a61cd723bcf2b0ccaaa3b8f779dfca17040bd459d9e615b82a7ea17993ec59f2' +\
+				   ':/var/lib/docker/aufs/diff/9967c5ad88de8c101809f7f22d4774b6791fe46ac3033d57abf7ebb1dd8e36ee' +\
 				   ' none /var/lib/docker/aufs/mnt/' + self.container_id
 
-		logging.info(mount_sh)
+		logging.debug(mount_sh)
 		p = sp.Popen(mount_sh,shell=True,stdin=sp.PIPE,stdout=sp.PIPE,stderr=sp.PIPE)
 		p.stdin.write('123456\n')
 		ret = p.wait()
-		logging.info(ret)
+#		logging.info(ret)
 		if ret:
 			logging.error('mount aufs failed.')
 			return False
@@ -121,12 +116,12 @@ class destination_node:
 
 		sed_sh = 'sudo sed -i \"s/' + last_container_id +'/' + self.container_id +\
 				 '/g\" ' + cgroup_log
-		logging.info(sed_sh)
+		logging.debug(sed_sh)
 		sp.call(sed_sh,shell=True)
 
 		encode_sh = 'sudo ' + crit_bin + ' encode -i ' + cgroup_log +\
 					' -o ' + image_dir + cgroup_img
-		logging.info(encode_sh)	
+		logging.debug(encode_sh)	
 		p = sp.Popen(encode_sh,shell=True,stdin=sp.PIPE,stdout=sp.PIPE,stderr=sp.PIPE)
 		p.stdin.write('123456\n')
 		ret = p.wait()
@@ -156,12 +151,12 @@ class destination_node:
 #		fp.close()
 		sed_sh = 'sudo sed -i \"s/' + last_container_id +'/' + self.container_id +\
 				 '/g\" ' + mount_log
-		logging.info(sed_sh)
+		logging.debug(sed_sh)
 		sp.call(sed_sh,shell=True)
 
 		encode_sh = 'sudo ' + crit_bin +' encode -i ' + mount_log +\
 					' -o ' + image_dir + mount_img
-		logging.info(encode_sh)
+		logging.debug(encode_sh)
 		p = sp.Popen(encode_sh,shell=True,stdin=sp.PIPE,stdout=sp.PIPE,stderr=sp.PIPE)
 		p.stdin.write('123456\n')
 		ret = p.wait()
@@ -171,16 +166,13 @@ class destination_node:
 			return False
 
 
-
-
-
-		restore_sh = 'sudo criu restore -o /var/lib/docker/restore.log -v4 -d -D ' +\
-					 image_dir + ' --manage-cgroups --evasive-devices --root /var/lib/docker/aufs/mnt/'+\
-					 self.container_id + ' --ext-mount-map /etc/hostname:/var/lib/docker/containers/' +\
-					 self.container_id + '/hostname --ext-mount-map /etc/hosts:/var/lib/docker/containers/' +\
-					 self.container_id + '/hosts --ext-mount-map /etc/resolv.conf:/var/lib/docker/containers/' +\
-					 self.container_id + '/resolv.conf' +\
-				     ' --ext-mount-map /sys/fs/cgroup/memory:/sys/fs/cgroup/memory' +\
+		#----use criu do the restore operations----#
+		restore_sh = 'sudo criu restore -v4 -D ' + restore_dir +\
+					 ' -o restore.log --manage-cgroups --evasive-devices' +\
+					 ' --ext-mount-map /etc/resolv.conf:/var/lib/docker/containers/' + self.container_id +'/resolv.conf' +\
+					 ' --ext-mount-map /etc/hosts:/var/lib/docker/containers/' + self.container_id +'/hosts' +\
+					 ' --ext-mount-map /etc/hostname:/var/lib/docker/containers/' + self.container_id +'/hostname' +\
+					 ' --ext-mount-map /sys/fs/cgroup/memory:/sys/fs/cgroup/memory' +\
 				     ' --ext-mount-map /sys/fs/cgroup/blkio:/sys/fs/cgroup/blkio' +\
 				     ' --ext-mount-map /sys/fs/cgroup/freezer:/sys/fs/cgroup/freezer' +\
 				     ' --ext-mount-map /sys/fs/cgroup/hugetlb:/sys/fs/cgroup/hugetlb' +\
@@ -191,13 +183,10 @@ class destination_node:
 					 ' --ext-mount-map /sys/fs/cgroup/net_cls:/sys/fs/cgroup/net_cls' +\
 				     ' --ext-mount-map /sys/fs/cgroup/net_prio:/sys/fs/cgroup/net_prio' +\
 				     ' --ext-mount-map /sys/fs/cgroup/perf_event:/sys/fs/cgroup/perf_event' +\
-				     ' --ext-mount-map /sys/fs/cgroup/systemd:/sys/fs/cgroup/systemd'
-#		restore_sh = 'sudo criu restore -o /var/lib/docker/restore.log -v4 --tree ' + pid + ' --images-dir ' +\
-#					 image_dir + ' --ext-mount-map auto'
-#       image_dir = self.workdir() + '/dump'
-#		restore_sh = 'criu restore --tree ' + pid +' --images-dir ' +\
-#					 image_dir +' --shell-job --ext-mount-map auto'
-		logging.info(restore_sh)
+				     ' --ext-mount-map /sys/fs/cgroup/systemd:/sys/fs/cgroup/systemd' +\
+					 ' -d --root /var/lib/docker/aufs/mnt/' + self.container_id +\
+					 ' --pidfile restore.pid'
+		logging.debug(restore_sh)
 		p = sp.Popen(restore_sh,shell=True,stdin=sp.PIPE,stdout=sp.PIPE,stderr=sp.PIPE)
 		p.stdin.write('123456\n')
 		ret = p.wait()
@@ -234,21 +223,6 @@ class destination_node:
 			logging.error('docker restore failed.')
 			return False
 		return True
-
-
-
-	
-	def dst_filesystem(self):
-		dst_fs = lm_docker_filesystem(self.container_id, self.task_id)
-		if dst_fs.extract_file() is False:
-			logging.error('Error: filesystem is destination node restore failed.')
-			return False
-		return True
-
-
-	def predump_restore(self,predump_image_name,predump_dir):
-		self.untar_image(predump_image_name,predump_dir)
-
 
 
 '''

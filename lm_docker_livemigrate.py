@@ -78,11 +78,11 @@ class live_migrate:
 		#----we need to know the destination node status, CRIU version, Docker version etc.----#
 		lm_socket = lm_docker_socket(self.dst_ip)
 		msg = 'init#' + self.task_id + '#' + self.label
-		print('client send msg: ' + msg)
+		logging.info('client send msg: %s ' %msg)
 		lm_socket.send_msg(msg)
 
 		data = lm_socket.recv_msg()
-		print ('data1' + data)
+		logging.info ('client recv msg: %s' %data)
 		if 'success' not in data:
 			logging.error('send msg failed')
 			return False
@@ -94,14 +94,14 @@ class live_migrate:
 			return False
 		fs_image = fs_handle.image_path()
 		msg_fs = 'fs#' + str(os.path.getsize(fs_image)) + '#'
-		logging.info(msg_fs)
+		logging.debug(msg_fs)
 		lm_socket.send_msg(msg_fs)
 
-		logging.info('fs send msg closed.')
+#		logging.info('fs send msg closed.')
 		lm_socket.send_file(fs_image)
-		logging.info('fs send closed.')
+#		logging.info('fs send closed.')
 		data = lm_socket.recv_msg()
-		logging.info(data)
+		logging.debug(data)
 
 		#----start the pre-copy looper, we use pre-copy to decrease the halt time.----#
 		pre_time_start = time.time()
@@ -120,17 +120,16 @@ class live_migrate:
 			#send predump image to the dst node
 			msg_predump = 'predump#' + livemigrate_handle.predump_name() + \
 						  '#' + str(predump_size) + '#'
-			logging.info(msg_predump)
+			logging.debug(msg_predump)
 			lm_socket.send_msg(msg_predump)
 			send_predump_image_start = time.time()
 			lm_socket.send_file(predump_image)
 			data = lm_socket.recv_msg()
-			logging.info(data)
+#			logging.info(data)
 			send_predump_image_end = time.time()
 			send_predump_image_time = send_predump_image_end - send_predump_image_start
-			print ('predump image size is : ' + sizeof_format(predump_size))
-			print ('measure bandwidth:' + sizeof_format((predump_size*8)/(send_predump_image_time)) +\
-						'/s')
+			logging.info('predump image size is : %s ' %sizeof_format(predump_size))
+			logging.info('measure bandwidth is : %s /s' %sizeof_format((predump_size*8)/(send_predump_image_time)))
 
 			#----control whether the pre-copy iteration continue or not----#
 			logging.info('predump_size' + str(predump_size))
@@ -161,36 +160,6 @@ class live_migrate:
 		lm_socket.send_msg(msg_dump)
 		lm_socket.send_file(dump_image)
 		data = lm_socket.recv_msg()
-		logging.info(data)
+#		logging.info(data)
 		return True
-
-		'''
-		#----do the last step, dump and send the dump image for dst node restore----#
-		precopy_end = time.time()
-
-		if not livemigrate_handle.dump(self.container_name):
-			logging.error('Error: there is something wrong in the last dump step.')
-			return False
-		dump_end = time.time()
-
-		dump_image = livemigrate_handle.dump_image_path()
-		dump_size = os.path.getsize(dump_image)
-
-		#send dump image to the dst node
-		msg_dump = 'dump#' + str(dump_size) + '#' +\
-				   livemigrate_handle.predump_name() +'#'
-		lm_docker_socket.send_msg(msg_dump)
-		lm_docker_socket.send_file(dump_image)
-		data = lm_docker_socket.recv_msg()
-		logging.debug(data)
-		return True
-		'''
-
-
-
-
-
-
-
-
 

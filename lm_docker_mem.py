@@ -11,7 +11,7 @@ from lm_docker_check import lm_docker_check
 
 def lz4_tarfile(level, input_name='pages-1.img',output_name='memory.lz4'):
 	cmd = 'lz4 -' + level + ' ' + input_name + ' ' + output_name
-	logging.info(cmd)
+	logging.debug(cmd)
 	sp.call(cmd, shell=True)
 	os.remove(input_name)
 
@@ -59,7 +59,7 @@ class lm_docker_memory:
 
 		predump_sh = 'criu pre-dump -o predump.log -v2 -t ' + \
 					 str(pid) + ' --images-dir ' + dir_name + append_cmd
-		logging.info(predump_sh)
+		logging.debug(predump_sh)
 
 		out_msg = sp.call(predump_sh, shell=True)
 		if out_msg:
@@ -121,16 +121,15 @@ class lm_docker_memory:
 	#----dump the change memory in last interative, and process tree states.----#
 		os.chdir(self.workdir())
 		dump_time_start = time.time()
-		logging.info('dump the process %s' + str(pid))
+		logging.info('dump the docker init process %s' + str(pid))
 		pre_path = '../predump'
 		logging.info(pre_path)
 		dump_dir = 'dump'
 		os.mkdir(dump_dir)
 		image_path = self.workdir() + dump_dir
 
-		dump_sh = 'criu dump -o /var/lib/docker/dump.log -v4 -t ' +\
-				  str(pid) + ' -D ' + dump_dir +' --root /var/lib/docker/aufs/mnt/' +\
-				  str(container_id) + ' --manage-cgroups --evasive-devices' +\
+		dump_sh = 'criu dump -v4 -D ' + dump_dir +\
+		          ' -o dump.log --manage-cgroups --evasive-devices' +\
 				  ' --ext-mount-map /etc/hosts:/etc/hosts' +\
 				  ' --ext-mount-map /etc/hostname:/etc/hostname' +\
 				  ' --ext-mount-map /etc/resolv.conf:/etc/resolv.conf' +\
@@ -146,14 +145,15 @@ class lm_docker_memory:
 				  ' --ext-mount-map /sys/fs/cgroup/net_cls:/sys/fs/cgroup/net_cls' +\
 				  ' --ext-mount-map /sys/fs/cgroup/net_prio:/sys/fs/cgroup/net_prio' +\
 				  ' --ext-mount-map /sys/fs/cgroup/perf_event:/sys/fs/cgroup/perf_event' +\
-				  ' --ext-mount-map /sys/fs/cgroup/systemd:/sys/fs/cgroup/systemd'
+				  ' --ext-mount-map /sys/fs/cgroup/systemd:/sys/fs/cgroup/systemd' +\
+				  ' -t ' + str(pid) +' --root /var/lib/docker/aufs/mnt/' + container_id
 
 
 #	dump_sh = 'criu dump -o dump.log -v2 -t ' + \
 #				  str(pid) +' --images-dir ' + dump_dir + ' --track-mem --prev-images-dir ' + \
 #				  pre_path +' --ext-mount-map auto '
 #                  pre_path +' --shell-job --ext-mount-map auto' 
-		logging.info(dump_sh)
+		logging.debug(dump_sh)
 
 		out_msg = sp.call(dump_sh, shell=True)
 		logging.info(out_msg)
