@@ -121,14 +121,14 @@ class lm_docker_memory:
 	#----dump the change memory in last interative, and process tree states.----#
 		os.chdir(self.workdir())
 		dump_time_start = time.time()
-		logging.info('dump the docker init process %s' + str(pid))
-		pre_path = '../predump'
-		logging.info(pre_path)
+		logging.info('dump the docker init process ' + str(pid))
 		dump_dir = 'dump'
+		predump_dir = 'predump'
 		os.mkdir(dump_dir)
-		image_path = self.workdir() + dump_dir
+#		image_path = self.workdir() + dump_dir
 
 		dump_sh = 'criu dump -v4 -D ' + dump_dir +\
+				  ' --track-mem --prev-images-dir ' + predump_dir +\
 		          ' -o dump.log --manage-cgroups --evasive-devices' +\
 				  ' --ext-mount-map /etc/hosts:/etc/hosts' +\
 				  ' --ext-mount-map /etc/hostname:/etc/hostname' +\

@@ -50,7 +50,7 @@ class lm_docker_server(SocketServer.BaseRequestHandler):
 
 	def handle(self):
 		tmp = self.recv_msg()
-		print ('tmp:' + tmp)
+		logging.info ('tmp:' + tmp)
 		str_array = tmp.split('#')
 		dst_handle = destination_node()
 		cmd_type = str_array[0]
@@ -85,16 +85,16 @@ class lm_docker_server(SocketServer.BaseRequestHandler):
 			if 'predump' == cmd_type:
 				predump_time_start = time.time()
 				predump_image = self.task_id + str_array[1] +'.tar'
-				logging.info(predump_image)
+				logging.debug(predump_image)
 				predump_size = int(str_array[2])
-				logging.info(predump_size)
+				logging.info('predump size is : %s ' %predump_size)
 				msg_predump = 'predump:'
 				if self.recv_file(predump_image,predump_size):
 					msg_predump += 'success'
 				else:
 					msg_predump += 'failed'
 				self.send_msg(msg_predump)
-				logging.info(msg_predump)
+				logging.debug(msg_predump)
 				dst_handle.predump_restore(predump_image,str_array[1])
 				predump_time_end = time.time()
 			
@@ -105,6 +105,7 @@ class lm_docker_server(SocketServer.BaseRequestHandler):
 				last_predump_dir = str_array[2]
 				dump_pid = str_array[3]
 				last_container_id = str_array[4]
+				logging.info('last dump size is : %s' %dump_size) 
 
 				if last_predump_dir != 'predump0':
 					os.rename(last_predump_dir, 'predump')
@@ -114,7 +115,7 @@ class lm_docker_server(SocketServer.BaseRequestHandler):
 				else:
 					msg_dump += 'failed'
 				self.send_msg(msg_dump)
-				logging.info(msg_dump)
+				logging.debug(msg_dump)
 				dst_handle.restore(dump_pid,dump_image,last_container_id)
 				dump_time_end = time.time()
 				self.send_msg('restore:success')
