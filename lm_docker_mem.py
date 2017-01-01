@@ -39,7 +39,7 @@ class lm_docker_memory:
 
 
 	#----the kernel iterative----#
-	def predump(self,pid):
+	def predump(self,container_id):
 		#----we use predump function to decrease the halt time.----#
 		#----in each iterative, we need the image_dir and parent_dir info----#
 		os.chdir(self.workdir())
@@ -55,10 +55,13 @@ class lm_docker_memory:
 			append_cmd = ' --prev-images-dir ' + parent_path
 
 		else:
-			append_cmd = ''
+			append_cmd = ' '
 
-		predump_sh = 'criu pre-dump -o predump.log -v2 -t ' + \
-					 str(pid) + ' --images-dir ' + dir_name + append_cmd
+#		predump_sh = 'criu pre-dump -o predump.log -v2 -t ' + \
+#					 str(pid) + ' --images-dir ' + dir_name + append_cmd
+		predump_sh = 'docker checkpoint --images-dir=' + dir_name +\
+					 ' --pre-dump --leave-running --track-mem' + append_cmd +\
+					 ' ' + container_id
 		logging.debug(predump_sh)
 
 		out_msg = sp.call(predump_sh, shell=True)
@@ -125,34 +128,33 @@ class lm_docker_memory:
 		dump_dir = 'dump'
 		predump_dir = 'predump'
 		os.mkdir(dump_dir)
-#		image_path = self.workdir() + dump_dir
+		dump_path = self.workdir() + dump_dir
+		pre_path = self.workdir() + predump_dir
 
-		dump_sh = 'criu dump -v4 -D ' + dump_dir +\
-				  ' --track-mem --prev-images-dir ' + predump_dir +\
-		          ' -o dump.log --manage-cgroups --evasive-devices' +\
-				  ' --ext-mount-map /etc/hosts:/etc/hosts' +\
-				  ' --ext-mount-map /etc/hostname:/etc/hostname' +\
-				  ' --ext-mount-map /etc/resolv.conf:/etc/resolv.conf' +\
-				  ' --ext-mount-map /.dockerinit:/.dockerinit' +\
-				  ' --ext-mount-map /sys/fs/cgroup/memory:/sys/fs/cgroup/memory' +\
-				  ' --ext-mount-map /sys/fs/cgroup/blkio:/sys/fs/cgroup/blkio' +\
-				  ' --ext-mount-map /sys/fs/cgroup/freezer:/sys/fs/cgroup/freezer' +\
-				  ' --ext-mount-map /sys/fs/cgroup/hugetlb:/sys/fs/cgroup/hugetlb' +\
-				  ' --ext-mount-map /sys/fs/cgroup/devices:/sys/fs/cgroup/devices' +\
-				  ' --ext-mount-map /sys/fs/cgroup/cpu:/sys/fs/cgroup/cpu' +\
-				  ' --ext-mount-map /sys/fs/cgroup/cpuset:/sys/fs/cgroup/cpuset' +\
-				  ' --ext-mount-map /sys/fs/cgroup/cpuacct:/sys/fs/cgroup/cpuacct' +\
-				  ' --ext-mount-map /sys/fs/cgroup/net_cls:/sys/fs/cgroup/net_cls' +\
-				  ' --ext-mount-map /sys/fs/cgroup/net_prio:/sys/fs/cgroup/net_prio' +\
-				  ' --ext-mount-map /sys/fs/cgroup/perf_event:/sys/fs/cgroup/perf_event' +\
-				  ' --ext-mount-map /sys/fs/cgroup/systemd:/sys/fs/cgroup/systemd' +\
-				  ' -t ' + str(pid) +' --root /var/lib/docker/aufs/mnt/' + container_id
+#		dump_sh = 'criu dump -v4 -D ' + dump_dir +\
+#				  ' --track-mem --prev-images-dir ' + predump_dir +\
+#		          ' -o dump.log --manage-cgroups --evasive-devices' +\
+#				  ' --ext-mount-map /etc/hosts:/etc/hosts' +\
+#				  ' --ext-mount-map /etc/hostname:/etc/hostname' +\
+#				  ' --ext-mount-map /etc/resolv.conf:/etc/resolv.conf' +\
+#				  ' --ext-mount-map /.dockerinit:/.dockerinit' +\
+#				  ' --ext-mount-map /sys/fs/cgroup/memory:/sys/fs/cgroup/memory' +\
+#				  ' --ext-mount-map /sys/fs/cgroup/blkio:/sys/fs/cgroup/blkio' +\
+#				  ' --ext-mount-map /sys/fs/cgroup/freezer:/sys/fs/cgroup/freezer' +\
+#				  ' --ext-mount-map /sys/fs/cgroup/hugetlb:/sys/fs/cgroup/hugetlb' +\
+#				  ' --ext-mount-map /sys/fs/cgroup/devices:/sys/fs/cgroup/devices' +\
+#				  ' --ext-mount-map /sys/fs/cgroup/cpu:/sys/fs/cgroup/cpu' +\
+#				  ' --ext-mount-map /sys/fs/cgroup/cpuset:/sys/fs/cgroup/cpuset' +\
+#				  ' --ext-mount-map /sys/fs/cgroup/cpuacct:/sys/fs/cgroup/cpuacct' +\
+#				  ' --ext-mount-map /sys/fs/cgroup/net_cls:/sys/fs/cgroup/net_cls' +\
+#				  ' --ext-mount-map /sys/fs/cgroup/net_prio:/sys/fs/cgroup/net_prio' +\
+#				  ' --ext-mount-map /sys/fs/cgroup/perf_event:/sys/fs/cgroup/perf_event' +\
+#				  ' --ext-mount-map /sys/fs/cgroup/systemd:/sys/fs/cgroup/systemd' +\
+#				  ' -t ' + str(pid) +' --root /var/lib/docker/aufs/mnt/' + container_id
+        predump_sh = 'docker checkpoint --images-dir=' + dump_path +\          
+		             ' --pre-dump --leave-running --track-mem --prev-images-dir=' + pre_path +\
+					 ' ' + container_id 
 
-
-#	dump_sh = 'criu dump -o dump.log -v2 -t ' + \
-#				  str(pid) +' --images-dir ' + dump_dir + ' --track-mem --prev-images-dir ' + \
-#				  pre_path +' --ext-mount-map auto '
-#                  pre_path +' --shell-job --ext-mount-map auto' 
 		logging.debug(dump_sh)
 
 		out_msg = sp.call(dump_sh, shell=True)

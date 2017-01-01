@@ -111,7 +111,7 @@ class live_migrate:
 
 		#---- inner loop use criu pre-dump to interarive dump the change memory----#
 		while(flag_precopy):
-			if not livemigrate_handle.predump(self.pid):
+			if not livemigrate_handle.predump(self.container_id):
 				return False
 			count+=1
 			predump_image = livemigrate_handle.predump_image_path()
