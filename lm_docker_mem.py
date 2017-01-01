@@ -9,11 +9,11 @@ from lm_docker_check import lm_docker_check
 
 
 
-def lz4_tarfile(level, input_name='pages-1.img',output_name='memory.lz4'):
-	cmd = 'lz4 -' + level + ' ' + input_name + ' ' + output_name
-	logging.debug(cmd)
-	sp.call(cmd, shell=True)
-	os.remove(input_name)
+#def lz4_tarfile(level, input_name='pages-1.img',output_name='memory.lz4'):
+#	cmd = 'lz4 -' + level + ' ' + input_name + ' ' + output_name
+#	logging.debug(cmd)
+#	sp.call(cmd, shell=True)
+#	os.remove(input_name)
 
 
 class lm_docker_memory:
@@ -59,7 +59,7 @@ class lm_docker_memory:
 
 #		predump_sh = 'criu pre-dump -o predump.log -v2 -t ' + \
 #					 str(pid) + ' --images-dir ' + dir_name + append_cmd
-		predump_sh = 'docker checkpoint --images-dir=' + dir_name +\
+		predump_sh = 'docker checkpoint --image-dir=' + dir_name +\
 					 ' --pre-dump --leave-running --track-mem' + append_cmd +\
 					 ' ' + container_id
 		logging.debug(predump_sh)
@@ -76,9 +76,9 @@ class lm_docker_memory:
 
 	def tar_image(self,image_dir,name,path):
 		os.chdir(image_dir)
-		os.chdir(path)
-		lz4_tarfile('1')
-		os.chdir(image_dir)
+#		os.chdir(path)
+#lz4_tarfile('1')
+#		os.chdir(image_dir)
 
 		tar_file = tarfile.open(name,'w')
 		tar_file.add(path)
@@ -130,31 +130,10 @@ class lm_docker_memory:
 		os.mkdir(dump_dir)
 		dump_path = self.workdir() + dump_dir
 		pre_path = self.workdir() + predump_dir
-
-#		dump_sh = 'criu dump -v4 -D ' + dump_dir +\
-#				  ' --track-mem --prev-images-dir ' + predump_dir +\
-#		          ' -o dump.log --manage-cgroups --evasive-devices' +\
-#				  ' --ext-mount-map /etc/hosts:/etc/hosts' +\
-#				  ' --ext-mount-map /etc/hostname:/etc/hostname' +\
-#				  ' --ext-mount-map /etc/resolv.conf:/etc/resolv.conf' +\
-#				  ' --ext-mount-map /.dockerinit:/.dockerinit' +\
-#				  ' --ext-mount-map /sys/fs/cgroup/memory:/sys/fs/cgroup/memory' +\
-#				  ' --ext-mount-map /sys/fs/cgroup/blkio:/sys/fs/cgroup/blkio' +\
-#				  ' --ext-mount-map /sys/fs/cgroup/freezer:/sys/fs/cgroup/freezer' +\
-#				  ' --ext-mount-map /sys/fs/cgroup/hugetlb:/sys/fs/cgroup/hugetlb' +\
-#				  ' --ext-mount-map /sys/fs/cgroup/devices:/sys/fs/cgroup/devices' +\
-#				  ' --ext-mount-map /sys/fs/cgroup/cpu:/sys/fs/cgroup/cpu' +\
-#				  ' --ext-mount-map /sys/fs/cgroup/cpuset:/sys/fs/cgroup/cpuset' +\
-#				  ' --ext-mount-map /sys/fs/cgroup/cpuacct:/sys/fs/cgroup/cpuacct' +\
-#				  ' --ext-mount-map /sys/fs/cgroup/net_cls:/sys/fs/cgroup/net_cls' +\
-#				  ' --ext-mount-map /sys/fs/cgroup/net_prio:/sys/fs/cgroup/net_prio' +\
-#				  ' --ext-mount-map /sys/fs/cgroup/perf_event:/sys/fs/cgroup/perf_event' +\
-#				  ' --ext-mount-map /sys/fs/cgroup/systemd:/sys/fs/cgroup/systemd' +\
-#				  ' -t ' + str(pid) +' --root /var/lib/docker/aufs/mnt/' + container_id
-        predump_sh = 'docker checkpoint --images-dir=' + dump_path +\          
-		             ' --pre-dump --leave-running --track-mem --prev-images-dir=' + pre_path +\
-					 ' ' + container_id 
-
+		dump_sh = 'docker checkpoint --image-dir=' + dump_path +\
+					 ' --track-mem --prev-images-dir=' + pre_path +\
+					 ' ' + container_id
+		
 		logging.debug(dump_sh)
 
 		out_msg = sp.call(dump_sh, shell=True)
