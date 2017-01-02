@@ -45,24 +45,24 @@ class lm_docker_memory:
 		os.chdir(self.workdir())
 		self.predump_count += 1
 		dir_name = self.predump_name()
+		dir_path = self.workdir() + dir_name
 		os.mkdir(dir_name)
 
 		if self.predump_count > 1:
 			parent_dir = 'predump' + str(self.predump_count - 1)
 			if not check_dir(self.workdir() + parent_dir):
 				logging.error('Error: parent dir is not exists.')
-			parent_path = '../' + parent_dir
-			append_cmd = ' --prev-images-dir ' + parent_path
+			parent_path = '../'  + parent_dir
+			append_cmd = '--prev-images-dir=' + parent_path
 
 		else:
-			append_cmd = ' '
+			append_cmd = ''
 
-#		predump_sh = 'criu pre-dump -o predump.log -v2 -t ' + \
-#					 str(pid) + ' --images-dir ' + dir_name + append_cmd
-		predump_sh = 'docker checkpoint --image-dir=' + dir_name +\
-					 ' --pre-dump --leave-running --track-mem' + append_cmd +\
+		predump_sh = 'docker checkpoint --image-dir=' + dir_path +\
+                             ' --work-dir=' + dir_path +\
+					 ' --pre-dump --leave-running ' + append_cmd +\
 					 ' ' + container_id
-		logging.debug(predump_sh)
+		logging.info(predump_sh)
 
 		out_msg = sp.call(predump_sh, shell=True)
 		if out_msg:
@@ -89,37 +89,7 @@ class lm_docker_memory:
 			return False
 		return True
 
-	'''
-	def dump(self,container):
-		dump_time_start = time.time()
-		logging.debug(container)
 
-		pre_path = self.workdir() + './predump'
-		if not check_dir(pre_path):
-			logging.debug('pre image is not exists.')
-
-		dump_dir = './dump'
-		os.mkdir(dump_dir)
-		image_path = self.workdir() + dump_dir
-		dump_sh = 'docker checkpoint --image-dir=' + image_path +\
-				  ' ' + ' --work-dir=' + image_path + \
-				  ' -allow-tcp=true ' + container
-		logging.debug(dump_sh)
-
-		out_msg = sp.call(dump_sh, shell=True)
-		if out_msg:
-			logging.error('Error: docker checkpoint failed.')
-			return False
-
-		dump_time_start2 = time.time()
-		name = self.task_id +'-dump.tar'
-		self.tar_image(self.workdir(),name,dump_dir)
-		dump_time_end = time.time()
-
-		logging.debug('dump handle time: %f' % (dump_time_start2 - dump_time_start1))
-		logging.debug('dump image pack time: %f' %(dump_time_end - dump_time_start2))
-		return True
-	'''
 	def dump(self,pid,container_id):
 	#----dump the change memory in last interative, and process tree states.----#
 		os.chdir(self.workdir())
@@ -129,12 +99,15 @@ class lm_docker_memory:
 		predump_dir = 'predump'
 		os.mkdir(dump_dir)
 		dump_path = self.workdir() + dump_dir
-		pre_path = self.workdir() + predump_dir
+		parent_path = '../' + predump_dir
 		dump_sh = 'docker checkpoint --image-dir=' + dump_path +\
-					 ' --track-mem --prev-images-dir=' + pre_path +\
-					 ' ' + container_id
-		
-		logging.debug(dump_sh)
+                          ' --work-dir=' + dump_path +\
+                          ' --track-mem --prev-images-dir=' + parent_path +\
+			  ' ' + container_id
+		logging.info(dump_sh)
+
+		con_stop_time = time.time()
+		logging.info('dump the docker init process ' + str(con_stop_time))
 
 		out_msg = sp.call(dump_sh, shell=True)
 		logging.info(out_msg)

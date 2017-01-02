@@ -20,12 +20,12 @@ from lm_docker_mem import lm_docker_memory
 
 
 class destination_node:
-	
+
 	#init the class, step in the docker dir.
 	def __init__(self):
 		os.chdir(base_dir + '/tmp/')
 
-	
+
 	#get the extractly container dir.
 	def workdir(self):
 		return base_dir + '/tmp/' + self.task_id
@@ -36,7 +36,7 @@ class destination_node:
 			os.mkdir(task_id)
 		os.chdir(task_id)
 		self.task_id = task_id
-		
+
 		label_array = label.split('-')
 		container_name = label_array[0]
 		base_image = label_array[1]
@@ -56,7 +56,7 @@ class destination_node:
 		ret,con_id = commands.getstatusoutput(cre_sh)
 		self.container_id = con_id
 
-	
+
 	def untar_image(self, image_name, dump_dir):
 		os.chdir(self.workdir())
 		if not check_file(image_name):
@@ -69,7 +69,7 @@ class destination_node:
        #lz4_extractfile()
 		os.chdir('../')
 		return True
-	
+
 	def dst_filesystem(self):
 		dst_fs = lm_docker_filesystem(self.container_id, self.task_id)
 		if dst_fs.extract_file() is False:
@@ -79,19 +79,23 @@ class destination_node:
 
 	def predump_restore(self, predump_image_name, predump_dir):
 		self.untar_image(predump_image_name, predump_dir)
-	
-	
+
+
 
 
 	def restore(self,pid,dump_image_name,last_container_id):
 		os.chdir(self.workdir())
 		self.untar_image(dump_image_name,'dump')
 		image_dir = self.workdir() + '/dump'
-		restore_op = 'docker restore --force=true --allow-tcp=true --work-dir='\
-					 + image_dir + ' --image-dir=' + image_dir + ' ' +self.container_id
-		logging.debug(restore_op)
-		
+                parent_path = self.workdir() + '/predump'
+		restore_op = 'docker restore --force=true --allow-tcp=true' +\
+                             ' --work-dir=' + image_dir +\
+                             ' --image-dir=' + image_dir + ' ' +self.container_id
+		logging.info(restore_op)
+
 		ret = sp.call(restore_op,shell = True)
+		resume_time = time.time()
+		logging.info('container resume time is ' + str(resume_time))
 		logging.info(ret)
 
 		if 0 != ret:
