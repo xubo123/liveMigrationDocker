@@ -12,11 +12,11 @@ from lm_docker_util import *
 from lm_docker_fs import lm_docker_filesystem
 from lm_docker_mem import lm_docker_memory
 
-#def lz4_extractfile(input_name = 'memory.lz4', output_name = 'pages-1.img'):
-#	cmd_sh = 'lz4 -d ' + input_name + ' ' + output_name
-#	logging.info(cmd_sh)
-#	sp.call(cmd_sh, shell = True)
-#	os.remove(input_name)
+def lz4_extractfile(input_name = 'memory.lz4', output_name = 'pages-1.img'):
+	cmd_sh = 'lz4 -d ' + input_name + ' ' + output_name
+	logging.info(cmd_sh)
+	sp.call(cmd_sh, shell = True)
+	os.remove(input_name)
 
 
 class destination_node:
@@ -66,7 +66,7 @@ class destination_node:
 		tar_file.extractall()
 		tar_file.close()
 		os.chdir(dump_dir)
-       #lz4_extractfile()
+		lz4_extractfile()
 		os.chdir('../')
 		return True
 
@@ -84,18 +84,25 @@ class destination_node:
 
 
 	def restore(self,pid,dump_image_name,last_container_id):
+		ready_time_start = time.time()
+		logging.info('restore ready start is %s :' %ready_time_start)
 		os.chdir(self.workdir())
 		self.untar_image(dump_image_name,'dump')
-		image_dir = self.workdir() + '/dump'
-                parent_path = self.workdir() + '/predump'
+		image_dir = self.workdir() +'/dump'
+		parent_path = self.workdir() +'/predump'
 		restore_op = 'docker restore --force=true --allow-tcp=true' +\
-                             ' --work-dir=' + image_dir +\
-                             ' --image-dir=' + image_dir + ' ' +self.container_id
-		logging.info(restore_op)
-
+					 ' --work-dir=' + image_dir +\
+					 ' --image-dir=' + image_dir + ' ' + self.container_id
+#	    logging.info(restore_op)
+		ready_time_end = time.time()
+		logging.info('restore ready time end is %s :' %ready_time_end)
+		sp_call_start = time.time()
 		ret = sp.call(restore_op,shell = True)
+		sp_call_end = time.time()
+		logging.info('restore start is %s :' %sp_call_start)
+		logging.info('restore end is %s :' %sp_call_end)
 		resume_time = time.time()
-		logging.info('container resume time is ' + str(resume_time))
+		logging.info('live migrate tools halt time is ' + str(resume_time))
 		logging.info(ret)
 
 		if 0 != ret:

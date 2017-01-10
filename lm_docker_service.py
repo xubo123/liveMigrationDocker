@@ -18,9 +18,9 @@ class ServerThread(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
 
 class server_node:
 	
-	def run(self):
-		HOST = ni.ifaddresses('p1p1')[2][0]['addr']
-		logging.info(HOST)
+	def run(self,host_ip):
+#		HOST = ni.ifaddresses('p1p1')[2][0]['addr']
+		HOST = host_ip
 		server = ServerThread((HOST,PORT),lm_docker_server)
 
 		try:

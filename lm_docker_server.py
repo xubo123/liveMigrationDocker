@@ -119,6 +119,7 @@ class lm_docker_server(SocketServer.BaseRequestHandler):
 				dst_handle.restore(dump_pid,dump_image,last_container_id)
 				dump_time_end = time.time()
 				self.send_msg('restore:success')
+				logging.info('send restore success msg time is %s :' %time.time())
 				break
 
 

@@ -144,12 +144,11 @@ class live_migrate:
 		
 		#----do the last step,dump the change memory and running states, ----#
 		#----send the dump image for dst node to restore the docker container.----#
-		dump_start = time.time()
-		logging.info('dump step start time' + str(dump_start))
+		
+		logging.info('dump step start time is %s :' %time.time())
 		if not livemigrate_handle.dump(self.pid,self.container_id):
 			logging.error('Error: there is something wrong in the last dump step.')
 			return False
-		dump_end = time.time()
 		dump_image = livemigrate_handle.dump_image_path()
 		dump_size = os.path.getsize(dump_image)
 
@@ -158,9 +157,17 @@ class live_migrate:
 				   livemigrate_handle.predump_name() +'#' +\
                    str(self.pid) +'#'+\
 				   self.container_id +'#'
+#		send_dump_image_start = time.time()
 		lm_socket.send_msg(msg_dump)
 		lm_socket.send_file(dump_image)
+#		send_dump_image_end = time.time()
+		logging.info('dump image send success time is %s :' %time.time())
+#		send_dump_image_time = send_dump_image_end - send_dump_image_start
+		
+#		logging.info('dump image size is : %s ' %sizeof_format(dump_size))
+#		logging.info('measure bandwidth is : %s /s' %sizeof_format((dump_size *8)/(send_dump_image_time)))
 		data = lm_socket.recv_msg()
+		logging.info('dump step source node receive msg time is %s :' %time.time())
 #		logging.info(data)
 		return True
 

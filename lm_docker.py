@@ -22,7 +22,8 @@ def help():
 	print('    fetch [service name] #get overlay image')
 	print('    overlay [new image] [base image] #create overlay image')
 	print('    migrate [container name] -t [des ip] #migrate container')
-
+	print('    migrate [container name] -src [-src ip] -dst [dst ip] \
+                          #migate container from src node to dst node ')
 
 def parase(argv):
 	argv_len = len(argv)
@@ -63,6 +64,27 @@ def parase(argv):
 			lmigrate = live_migrate(container_name, dst_ip)
 		    
 			ret = lmigrate.run()
+
+	if argv_len = 6:
+	    if opt == 'migrate':
+		    container_name = argv[1]
+			src_option = argv[2]
+			src_ip = argv[3]
+			dst_option = argv[4]
+			dst_ip = argv[5]
+			if src_option != '-src':
+				logging.error('please follow opt format:')
+				logging.error('migrate [container] -src [src ip] -dst [dst ip]')
+				return False
+			if dst_option !='-dst':
+				logging.error('please follow opt format:')
+				logging.error('migrate [container] -src [src ip] -dst [dst ip]')
+				return False
+			server = server_node(src_ip)
+		    server.run()
+		    
+
+
 
 	if ret is False:
 		logging.error('service failed')
