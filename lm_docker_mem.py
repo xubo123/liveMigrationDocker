@@ -2,6 +2,7 @@
 #encoding: utf-8
 
 import os
+import shutil
 import tarfile
 import time
 from lm_docker_util import *
@@ -39,12 +40,15 @@ class lm_docker_memory:
 
 
 	#----the kernel iterative----#
-	def predump(self,container_id):
+	def predump(self,container_id,is_transfer):
 		#----we use predump function to decrease the halt time.----#
 		#----in each iterative, we need the image_dir and parent_dir info----#
 		os.chdir(self.workdir())
-		self.predump_count += 1
+		if(is_transfer == True):
+			self.predump_count += 1
 		dir_name = self.predump_name()
+		if(is_transfer == False):
+			shutil.rmtree(dir_name)
 		dir_path = self.workdir() + dir_name
 		work_path = self.workdir()
 		os.mkdir(dir_name)

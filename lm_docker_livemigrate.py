@@ -108,39 +108,73 @@ class live_migrate:
 		livemigrate_handle = lm_docker_memory(self.task_id)
 		flag_precopy = True
 		count = 1
+		last_dirty_size = 0
+		is_transfer = True
 
 		#---- inner loop use criu pre-dump to interarive dump the change memory----#
 		while(flag_precopy):
-			if not livemigrate_handle.predump(self.container_id):
+			if not livemigrate_handle.predump(self.container_id,is_transfer):
 				return False
-			count+=1
 			predump_image = livemigrate_handle.predump_image_path()
 			predump_size = os.path.getsize(predump_image)
-			
-			#send predump image to the dst node
-			msg_predump = 'predump#' + livemigrate_handle.predump_name() + \
-						  '#' + str(predump_size) + '#'
-			logging.debug(msg_predump)
-			lm_socket.send_msg(msg_predump)
-			send_predump_image_start = time.time()
-			lm_socket.send_file(predump_image)
-			data = lm_socket.recv_msg()
-#			logging.info(data)
-			send_predump_image_end = time.time()
-			send_predump_image_time = send_predump_image_end - send_predump_image_start
-			logging.info('predump image size is : %s ' %sizeof_format(predump_size))
-			logging.info('measure bandwidth is : %s /s' %sizeof_format((predump_size*8)/(send_predump_image_time)))
+            
+			if(count == 1):
+				last_dirty_size = predump_size
+				msg_predump = 'predump#' + livemigrate_handle.predump_name() + \
+							  '#' + str(predump_size) + '#'
+				logging.debug(msg_predump)
+				lm_socket.send_msg(msg_predump)
+				send_predump_image_start = time.time()
+				lm_socket.send_file(predump_image)
+				data = lm_socket.recv_msg()
+				send_predump_image_end = time.time()
+				count+=1
+				trans_time = send_predump_image_end - send_predump_image_start
+				is_tranfer = True
+				is_transfer = True
+#				logging.info('predump image size is : %s ' %sizeof_format(predump_size))
 
-			#----control whether the pre-copy iteration continue or not----#
-			logging.info('predump_size' + str(predump_size))
-			logging.info('send_predump_image_time' + str(send_predump_image_time))
-			#if(send_predump_image_time < 0.001):
-			if (count== 5):
-			#if(predump_size <= (predump_size/send_predump_image_time) * 1.5):
+#				logging.info('measure bandwidth is : %s /s' %sizeof_format((predump_size*8)/(send_predump_image_time)))
+			
+			elif(count == 30):	
+				last_dirty_size = predump_size
+			    #send the memory img to the dst node
+				msg_predump = 'predump#' + livemigrate_handle.predump_name() + \
+							  '#' + str(predump_size) + '#'
+				logging.debug(msg_predump)
+				lm_socket.send_msg(msg_predump)
+				send_predump_image_start = time.time()
+				lm_socket.send_file(predump_image)
+				data = lm_socket.recv_msg()
+				send_predump_image_end = time.time()
+				send_predump_image_time = send_predump_image_end - send_predump_image_start
+				logging.info('predump image size is : %s ' %sizeof_format(predump_size))
+				logging.info('measure bandwidth is : %s /s' %sizeof_format((predump_size*8)/(send_predump_image_time)))
 				flag_precopy = False
-				if(False == flag_precopy):
-					logging.info('predump loop end')
+				logging.info('predump loop end.')
 				livemigrate_handle.rename()
+
+			elif(predump_size >= last_dirty_size):
+				count+=1
+				is_transfer = False
+			else:
+				last_dirty_size = predump_size
+			    #send the memory img to the dst node
+				msg_predump = 'predump#' + livemigrate_handle.predump_name() + \
+							  '#' + str(predump_size) + '#'
+				logging.debug(msg_predump)
+				lm_socket.send_msg(msg_predump)
+				send_predump_image_start = time.time()
+				lm_socket.send_file(predump_image)
+				data = lm_socket.recv_msg()
+				send_predump_image_end = time.time()
+				send_predump_image_time = send_predump_image_end - send_predump_image_start
+				logging.info('predump image size is : %s ' %sizeof_format(predump_size))
+				logging.info('measure bandwidth is : %s /s' %sizeof_format((predump_size*8)/(send_predump_image_time)))
+				count+=1
+				is_transfer = True
+				if(predump_size < 5000000):
+					flag_precopy = False
 		
 		#----do the last step,dump the change memory and running states, ----#
 		#----send the dump image for dst node to restore the docker container.----#
